@@ -1,0 +1,81 @@
+/* each level node should be in the same line */
+
+#tree {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 40px;
+  z-index: 1;
+}
+
+.level {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.level-number {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.level-nodes {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.node {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.key:not(:last-child) {
+  border-right: none;
+}
+
+.key {
+  border: 2px solid black;
+  padding: 8px;
+  /* animation: add-key 0.5s ease-in-out; */
+}
+
+/* .remove-key {
+  color: red;
+  animation: remove-key 0.5s ease-in-out;
+} */
+
+@keyframes add-key {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes remove-key {
+  0% {
+    transform: translate(100%, 100%);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}

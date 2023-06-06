@@ -35,9 +35,10 @@ class Node {
       // então a chave é inserida na posição i
       // e o ponteiro da posição i é deslocado para a direita
       this.keys.splice(i, 0, value)
-      this.pointers.splice(i, 0, pointer)
+      this.pointers.splice(i + 1, 0, pointer)
       return
     }
+
     // Caso a chave seja maior que todas as chaves do nó
     // então o último ponteiro é o nó que contém a chave
     this.keys.push(value)
@@ -152,8 +153,6 @@ class BPlusTree {
   }
 
   insertParent(node, newKey, newNode) {
-    console.log('insertParent', node, newKey, newNode)
-
     if (this.root == node) {
       const newRoot = new InternalNode(this.fanout)
       newRoot.keys = [newKey]
@@ -161,15 +160,10 @@ class BPlusTree {
       this.root = newRoot
     }
 
-    // newKey = 'Kim'
-    // node = ['Gold', 'Katz']
-    // newNode = ['Kim', 'Lamport']
-
     const parent = this.parent(node)
 
     if (parent.keys.length < this.fanout - 1) {
       parent.insert(newKey, newNode)
-      console.log('parent', parent)
       return
     }
 
@@ -179,14 +173,14 @@ class BPlusTree {
     T.keys = parent.keys
     T.pointers = parent.pointers
 
-    T.insert(newKey, newNode)
+    T.keys.push(newKey)
+    T.pointers.push(newNode)
 
     parent.keys = T.keys.slice(0, middleIndex - 1)
     parent.pointers = T.pointers.slice(0, middleIndex)
 
     const rightNode = new InternalNode(this.fanout)
     rightNode.keys = T.keys.slice(middleIndex)
-
     rightNode.pointers = T.pointers.slice(middleIndex)
 
     this.insertParent(parent, T.keys[middleIndex - 1], rightNode)
@@ -206,7 +200,6 @@ class BPlusTree {
     if (!leafNode.isNodeOverfull()) return
     const rightNode = leafNode.split()
 
-    console.log('insert', leafNode, rightNode)
     this.insertParent(leafNode, rightNode.mostLeftKey(), rightNode)
   }
 }

@@ -5,10 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Visualizacao Árvores</title>
     <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/SearchNavStyle/TypeInput.css" />
+    <link rel="stylesheet" href="assets/css/SearchNavStyle/SearchBar.css" />
+    <link rel="stylesheet" href="assets/css/SearchNavStyle/NavBar.css" />
+    <script src="assets/js/TypeInput.js"></script>
     <!-- <script src="assets/js/script.js"></script> -->
   </head>
   <body>
-    <div id="tree">
+    <nav id="navbar">
+      <div class="input-type">
+        <label class="btn-switch">
+          <input
+            value="1"
+            id="typeNode"
+            name="typeNode"
+            type="checkbox"
+            onclick="handleTypeInput()"
+          />
+          <label
+            class="btn-switch-inner"
+            data-off="Manual"
+            data-on="Random"
+            for="typeNode"
+          ></label>
+        </label>
+      </div>
+      <div id="manual-container">
+        <input class="input-bar" type="number" placeholder="Digite o índice" />
+        <button class="input-button">Inserir</button>
+        <button class="input-button">Buscar</button>
+        <button class="input-button">Deletar</button>
+      </div>
+      <div id="random-container">
+        <input class="input-bar" type="number" placeholder="Índice inicial" />
+        <input class="input-bar" type="number" placeholder="Índice Final" />
+        <input class="input-bar" type="number" placeholder="N° de elementos" />
+        <button class="input-button">Inserir</button>
+        <button class="input-button">Deletar</button>
+      </div>
+    </nav>
+    <!-- <div id="tree">
       <canvas id="canvas"></canvas>
       <div class="level">
         <div class="level-number">1</div>
@@ -55,6 +91,6 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </body>
 </html>

@@ -2,11 +2,9 @@ class BPlusTreeVisualizer {
   constructor(tree) {
     this.tree = tree
     this.init()
-    console.log(this.tree)
   }
 
   createNode(fanout, isLeaf) {
-    console.log('createNode', fanout, isLeaf)
     const createdNode = isLeaf ? new LeafNode(fanout) : new InternalNode(fanout)
     const nodeVisualizer = new BPlusTreeNodeVisualizer(createdNode)
     const container = document.getElementById('container')

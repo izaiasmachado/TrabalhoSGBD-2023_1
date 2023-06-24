@@ -7,7 +7,14 @@ class BPlusTree extends Observable {
   }
 
   defaultCreateNodeFunction(fanout, isLeaf) {
-    return isLeaf ? new LeafNode(fanout) : new InternalNode(fanout)
+    const createdNode = isLeaf ? new LeafNode(fanout) : new InternalNode(fanout)
+    this.notifyAll({
+      type: 'createdNewNode',
+      data: {
+        node: createdNode,
+      },
+    })
+    return createdNode
   }
 
   setCreateNodeFunction(createNodeFunction) {
@@ -130,6 +137,14 @@ class BPlusTree extends Observable {
   insertParent(node, newKey, newNode) {
     if (this.root == node) {
       const newRoot = this.createNodeFunction(this.fanout, false)
+
+      this.notifyAll({
+        type: 'createRoot',
+        data: {
+          node: newRoot,
+        },
+      })
+
       newRoot.insert(newKey, node)
       newRoot.pointers.push(newNode)
       this.root = newRoot
@@ -149,6 +164,15 @@ class BPlusTree extends Observable {
     // e o nó pai do nó pai é inserido no nó pai do nó
     // e assim por diante
     const rightNode = this.createNodeFunction(this.fanout, false)
+    this.notifyAll({
+      type: 'createNode',
+      data: {
+        leftNode: leafNode,
+        node: rightNode,
+        level: this.getNodeLevel(leafNode),
+      },
+    })
+
     parent.split(rightNode)
     this.insertParent(parent, rightNode.mostLeftKey(), rightNode)
   }
@@ -158,6 +182,13 @@ class BPlusTree extends Observable {
     if (this.isEmpty()) {
       this.root = this.createNodeFunction(this.fanout, true)
       leafNode = this.root
+
+      this.notifyAll({
+        type: 'createRoot',
+        data: {
+          node: this.root,
+        },
+      })
     } else {
       leafNode = this.findSupposedLeafNode(value)
     }
@@ -169,6 +200,16 @@ class BPlusTree extends Observable {
 
     leafNode.insert(value, pointer)
     const rightNode = this.createNodeFunction(this.fanout, true)
+
+    this.notifyAll({
+      type: 'createNode',
+      data: {
+        leftNode: leafNode,
+        node: rightNode,
+        level: this.getNodeLevel(leafNode),
+      },
+    })
+
     leafNode.split(rightNode)
     this.insertParent(leafNode, rightNode.mostLeftKey(), rightNode)
   }

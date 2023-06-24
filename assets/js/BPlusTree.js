@@ -1,96 +1,65 @@
-class Node {
-  constructor(fanout) {
-    this.fanout = fanout
-    this.keys = []
-    this.pointers = []
-  }
-
-  mostLeftKey() {
-    return this.keys[0]
-  }
-
-  isNodeFull() {
-    return this.keys.length === this.fanout - 1
-  }
-
-  isNodeOverfull() {
-    return this.keys.length >= this.fanout
-  }
-
-  hasKey(key) {
-    return this.keys.includes(key)
-  }
-
-  lastNonNullPointer() {
-    const validPointers = this.pointers.filter(p => p !== null)
-    const lastNonNullPointerIndex = validPointers.length - 1
-    return this.pointers[lastNonNullPointerIndex]
-  }
-
-  insert(value, pointer) {
-    const i = this.keys.findIndex(k => value <= k)
-
-    if (i !== -1) {
-      // Caso a chave seja menor que uma das chaves do nó
-      // então a chave é inserida na posição i
-      // e o ponteiro da posição i é deslocado para a direita
-      this.keys.splice(i, 0, value)
-      this.pointers.splice(i + 1, 0, pointer)
-      return
-    }
-
-    // Caso a chave seja maior que todas as chaves do nó
-    // então o último ponteiro é o nó que contém a chave
-    this.keys.push(value)
-    this.pointers.push(pointer)
-  }
-}
-
-class InternalNode extends Node {
-  constructor(fanout, key, pointer) {
-    super(fanout, key, pointer)
-  }
-
-  split() {
-    const middleIndex = Math.ceil((this.fanout + 1) / 2)
-    const rightNode = new InternalNode(this.fanout)
-
-    // O nó da direita recebe as chaves e ponteiros da metade para frente
-    rightNode.keys = this.keys.slice(middleIndex)
-    rightNode.pointers = this.pointers.slice(middleIndex)
-
-    // O nó da esquerda recebe as chaves e ponteiros da metade para trás
-    this.keys = this.keys.slice(0, middleIndex - 1)
-    this.pointers = this.pointers.slice(0, middleIndex)
-  }
-}
-
-class LeafNode extends Node {
-  constructor(fanout, key, pointer) {
-    super(fanout, key, pointer)
-  }
-
-  /**
-   * Divide o nó em dois e retorna o nó da direita
-   */
-  split() {
-    const middleIndex = Math.ceil(this.fanout / 2)
-    const rightNode = new LeafNode(this.fanout)
-
-    rightNode.keys = this.keys.slice(middleIndex)
-    rightNode.pointers = this.pointers.slice(middleIndex)
-
-    this.keys = this.keys.slice(0, middleIndex)
-    this.pointers = this.pointers.slice(0, middleIndex)
-
-    return rightNode
-  }
-}
-
 class BPlusTree {
   constructor(fanout) {
     this.fanout = fanout
     this.root = null
+  }
+
+  getNodeLevel(node) {
+    if (node === null) return 0
+
+    let c = this.root
+    let level = 0
+
+    while (c instanceof InternalNode) {
+      const i = c.pointers.findIndex(p => p === node)
+
+      if (i !== -1) return level + 1
+
+      c = c.pointers.find(p => p.mostLeftKey() <= node.mostLeftKey())
+      level++
+    }
+
+    return level
+  }
+
+  // imprime a árvore em JSON
+  toJSON() {
+    // {
+    //   id: 1,
+    // keys: ['a', 'b'],
+    // children: [
+    //   { id: 2, keys: ['c', 'd'], children: [] },
+    //   { id: 3, keys: ['e', 'f'], children: [] },
+    //   { id: 4, keys: ['g', 'h'], children: [] },
+    // ]
+    // }
+    const root = this.root
+    if (root === null) return null
+
+    const queue = [root]
+    const tree = { id: 1, keys: root.keys, children: [] }
+
+    while (queue.length > 0) {
+      const node = queue.shift()
+
+      if (node instanceof InternalNode) {
+        const children = node.pointers.filter(
+          p => p !== null && p !== undefined,
+        )
+        // const childrenKeys = children.map(c => c.keys)
+
+        const childrenNodes = children.map(c => {
+          // const id =
+          return { keys: c.keys, children: [] }
+        })
+
+        tree.children.push(...childrenNodes)
+
+        queue.push(...children)
+      }
+    }
+
+    return tree
   }
 
   isEmpty() {

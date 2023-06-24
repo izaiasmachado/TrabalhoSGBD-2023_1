@@ -55,17 +55,6 @@ class BPlusTreeNode extends BaseNode {
   }
 
   delete(value) {
-    const i = this.keys.findIndex(k => value <= k)
-
-    // Caso a chave seja igual a uma das chaves do nó
-    // então a chave é removida da posição i
-    // e o ponteiro da chave é removido da posição i + 1
-    // Caso a chave seja menor que uma das chaves do nó
-    // então a chave não existe no nó
-    if (value !== this.keys[i]) return
-
-    this.keys.splice(i, 1)
-    this.pointers.splice(i, 1)
     this.notifyAll({
       type: 'deleteKey',
       node: this,
@@ -122,15 +111,7 @@ class InternalNode extends BPlusTreeNode {
 
     this.keys.splice(i, 1)
     this.pointers.splice(i + 1, 1)
-    this.notifyAll({
-      type: 'deleteKey',
-      node: this,
-      data: {
-        key: {
-          value,
-        },
-      },
-    })
+    super.delete(value)
   }
 
   split(rightNode) {
@@ -163,6 +144,21 @@ class LeafNode extends BPlusTreeNode {
     this.pointers.splice(insertKeyIndex, 0, pointer)
 
     super.insert(value, pointer, insertKeyIndex)
+  }
+
+  delete(value) {
+    const i = this.keys.findIndex(k => value <= k)
+
+    // Caso a chave seja igual a uma das chaves do nó
+    // então a chave é removida da posição i
+    // e o ponteiro da chave é removido da posição i + 1
+    // Caso a chave seja menor que uma das chaves do nó
+    // então a chave não existe no nó
+    if (value !== this.keys[i]) return
+
+    this.keys.splice(i, 1)
+    this.pointers.splice(i, 1)
+    super.delete(value)
   }
 
   /**

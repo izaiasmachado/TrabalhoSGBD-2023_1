@@ -7,6 +7,17 @@ function uuidv4() {
   )
 }
 
+function createArrayObserver(array, renderFunction) {
+  return new Proxy(array, {
+    set(target, property, value, receiver) {
+      target[property] = value
+      renderFunction()
+
+      return true
+    },
+  })
+}
+
 class Observable {
   constructor() {
     this.observers = []

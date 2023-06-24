@@ -1,8 +1,62 @@
+/**
+ * Reponsável por mostrar um único level da árvore.
+ * Caso o level seja modificado, então o level é atualizado.
+ */
+class LevelVisualizer {
+  constructor(levelNodes = []) {
+    this.levelNodes = levelNodes
+    this.levelNumber = 0
+    this.init()
+  }
+
+  setLevelNumber(levelNumber) {
+    this.levelNumber = levelNumber
+  }
+
+  init() {
+    this.createElement()
+    const updateLevelNodesFixedScope = this.updateLevelNodes.bind(this)
+    createArrayObserver(this.levelNodes, () => updateLevelNodesFixedScope())
+  }
+
+  updateLevelNodes() {
+    this.levelNodes.forEach(node => {
+      this.levelNodesElement.appendChild(node.element)
+    })
+  }
+
+  createElement() {
+    this.element = document.createElement('div')
+    this.element.classList.add('level')
+
+    this.levelNumberElement = document.createElement('div')
+    this.levelNumberElement.classList.add('level-number')
+    this.levelNumberElement.innerText = this.levelNumber
+
+    this.levelNodesElement = document.createElement('div')
+    this.levelNodesElement.classList.add('level-nodes')
+
+    this.updateLevelNodes()
+
+    this.element.appendChild(this.levelNumberElement)
+    this.element.appendChild(this.levelNodesElement)
+  }
+
+  render() {
+    while (this.element.firstChild) {
+      this.element.removeChild(this.element.firstChild)
+    }
+
+    this.element.appendChild(this.levelNumberElement)
+    this.element.appendChild(this.levelNodesElement)
+  }
+}
+
 class BPlusTreeVisualizer {
   constructor(tree) {
     this.tree = tree
-    this.init()
     this.levels = []
+    this.init()
     this.nodeVisualizers = {}
   }
 
@@ -20,6 +74,8 @@ class BPlusTreeVisualizer {
 
   init() {
     this.createElement()
+    const renderFixedScope = this.render.bind(this)
+    createArrayObserver(this.levels, () => renderFixedScope())
     this.tree.subscribe(payload => this.listenerFunction(payload))
   }
 
@@ -51,25 +107,11 @@ class BPlusTreeVisualizer {
     }
 
     this.levels.forEach((level, index) => {
-      const levelElement = document.createElement('div')
-      levelElement.classList.add('level')
-      levelElement.setAttribute('data-level', index)
-
-      const levelNumberElement = document.createElement('div')
-      levelNumberElement.classList.add('level-number')
-      levelNumberElement.innerText = index
-
-      const levelNodesElement = document.createElement('div')
-      levelNodesElement.classList.add('level-nodes')
-
-      level.forEach(node => {
-        const visualizer = this.nodeVisualizers[node.id]
-        levelNodesElement.appendChild(visualizer.element)
-      })
-
-      levelElement.appendChild(levelNumberElement)
-      levelElement.appendChild(levelNodesElement)
-      this.element.appendChild(levelElement)
+      const nodeVisualizers = level.map(node => this.nodeVisualizers[node.id])
+      const levelVisualizer = new LevelVisualizer(nodeVisualizers)
+      levelVisualizer.setLevelNumber(index)
+      levelVisualizer.render()
+      this.element.appendChild(levelVisualizer.element)
     })
   }
 }

@@ -137,7 +137,6 @@ class BPlusTree extends Observable {
     }
 
     const parent = this.parent(node)
-
     if (parent.pointers.length < this.fanout) {
       parent.insert(newKey, newNode)
       return
@@ -163,9 +162,12 @@ class BPlusTree extends Observable {
       leafNode = this.findSupposedLeafNode(value)
     }
 
-    leafNode.insert(value, pointer)
+    if (leafNode.keys.length < leafNode.fanout - 1) {
+      leafNode.insert(value, pointer)
+      return
+    }
 
-    if (!leafNode.isNodeOverfull()) return
+    leafNode.insert(value, pointer)
     const rightNode = this.createNodeFunction(this.fanout, true)
     leafNode.split(rightNode)
     this.insertParent(leafNode, rightNode.mostLeftKey(), rightNode)

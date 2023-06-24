@@ -43,9 +43,9 @@ class BPlusTreeNode extends BaseNode {
   insert(value, pointer, index) {
     this.notifyAll({
       type: 'insertKey',
-      node: this,
       data: {
         key: {
+          node: this,
           value,
           index,
         },
@@ -57,8 +57,8 @@ class BPlusTreeNode extends BaseNode {
   delete(value) {
     this.notifyAll({
       type: 'deleteKey',
-      node: this,
       data: {
+        node: this,
         key: {
           value,
         },

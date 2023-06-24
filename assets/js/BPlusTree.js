@@ -7,7 +7,14 @@ class BPlusTree extends Observable {
   }
 
   defaultCreateNodeFunction(fanout, isLeaf) {
-    return isLeaf ? new LeafNode(fanout) : new InternalNode(fanout)
+    const createdNode = isLeaf ? new LeafNode(fanout) : new InternalNode(fanout)
+    this.notifyAll({
+      type: 'createdNewNode',
+      data: {
+        node: createdNode,
+      },
+    })
+    return createdNode
   }
 
   setCreateNodeFunction(createNodeFunction) {
@@ -158,6 +165,13 @@ class BPlusTree extends Observable {
     if (this.isEmpty()) {
       this.root = this.createNodeFunction(this.fanout, true)
       leafNode = this.root
+
+      this.notifyAll({
+        type: 'createRoot',
+        data: {
+          node: this.root,
+        },
+      })
     } else {
       leafNode = this.findSupposedLeafNode(value)
     }

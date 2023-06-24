@@ -1,7 +1,17 @@
-class BPlusTree {
+class BPlusTree extends Observable {
   constructor(fanout) {
+    super()
     this.fanout = fanout
     this.root = null
+    this.createNodeFunction = this.defaultCreateNodeFunction
+  }
+
+  defaultCreateNodeFunction(fanout, isLeaf) {
+    return isLeaf ? new LeafNode(fanout) : new InternalNode(fanout)
+  }
+
+  setCreateNodeFunction(createNodeFunction) {
+    this.createNodeFunction = createNodeFunction
   }
 
   getNodeLevel(node) {
@@ -123,7 +133,7 @@ class BPlusTree {
 
   insertParent(node, newKey, newNode) {
     if (this.root == node) {
-      const newRoot = new InternalNode(this.fanout)
+      const newRoot = this.createNodeFunction(this.fanout, false)
       newRoot.keys = [newKey]
       newRoot.pointers = [node, newNode]
       this.root = newRoot
@@ -138,7 +148,7 @@ class BPlusTree {
 
     const middleIndex = Math.ceil((this.fanout + 1) / 2)
 
-    const T = new InternalNode(this.fanout)
+    const T = this.createNodeFunction(this.fanout, false)
     T.keys = parent.keys
     T.pointers = parent.pointers
 
@@ -148,7 +158,7 @@ class BPlusTree {
     parent.keys = T.keys.slice(0, middleIndex - 1)
     parent.pointers = T.pointers.slice(0, middleIndex)
 
-    const rightNode = new InternalNode(this.fanout)
+    const rightNode = this.createNodeFunction(this.fanout, false)
     rightNode.keys = T.keys.slice(middleIndex)
     rightNode.pointers = T.pointers.slice(middleIndex)
 
@@ -158,7 +168,7 @@ class BPlusTree {
   insert(value, pointer) {
     let leafNode
     if (this.isEmpty()) {
-      this.root = new LeafNode(this.fanout)
+      this.root = this.createNodeFunction(this.fanout, true)
       leafNode = this.root
     } else {
       leafNode = this.findSupposedLeafNode(value)
@@ -168,7 +178,7 @@ class BPlusTree {
 
     if (!leafNode.isNodeOverfull()) return
     const rightNode = leafNode.split()
-
+    console.log('insertParent')
     this.insertParent(leafNode, rightNode.mostLeftKey(), rightNode)
   }
 }

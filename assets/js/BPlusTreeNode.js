@@ -88,6 +88,8 @@ class InternalNode extends BPlusTreeNode {
     // O nó da esquerda recebe as chaves e ponteiros da metade para trás
     this.keys = this.keys.slice(0, middleIndex - 1)
     this.pointers = this.pointers.slice(0, middleIndex)
+
+    return rightNode
   }
 }
 
@@ -100,6 +102,8 @@ class LeafNode extends BPlusTreeNode {
    * Divide o nó em dois e retorna o nó da direita
    */
   split() {
+    // do split using inserts and deletes
+
     const middleIndex = Math.ceil(this.fanout / 2)
     const rightNode = new LeafNode(this.fanout)
 

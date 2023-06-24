@@ -8,10 +8,6 @@ class BPlusTreeNodeVisualizer {
     this.init()
   }
 
-  test() {
-    console.log('test')
-  }
-
   init() {
     this.createElement()
     this.node.subscribe(payload => this.listenerFunction(payload))
@@ -46,11 +42,13 @@ class BPlusTreeNodeVisualizer {
   }
 
   insertKey(data) {
+    const insertionIndex =
+      data.key.index !== -1 ? data.key.index : this.node.keys.length - 1
     const keyElement = document.createElement('div')
     keyElement.classList.add('key')
     keyElement.setAttribute('data-key', data.key.value)
     keyElement.innerText = data.key.value
-    this.element.appendChild(keyElement)
+    this.element.insertBefore(keyElement, this.element.children[insertionIndex])
   }
 
   deleteKey(key) {
@@ -70,17 +68,33 @@ class BPlusTreeNodeVisualizer {
 }
 
 window.addEventListener('load', () => {
+  const tree = new BPlusTree(6)
+  const treeVisualizer = new BPlusTreeVisualizer(tree)
+
+  tree.insert('Chave5', {})
+  tree.insert('Chave3', {})
+  tree.insert('Chave2', {})
+  tree.insert('Chave1', {})
+  tree.insert('Chave4', {})
+
+  console.log(tree)
+
   // create a BPlusTree
-  const node = new BPlusTreeNode(3)
   // create a BPlusTreeNodeVisualizer
-  const nodeVisualizer = new BPlusTreeNodeVisualizer(node)
+
+  // const node = new BPlusTreeNode(3)
+  // const nodeVisualizer = new BPlusTreeNodeVisualizer(node)
+
   // append nodeVisualizer.element to the DOM
-  const container = document.getElementById('container')
-  container.appendChild(nodeVisualizer.element)
-  console.log(nodeVisualizer.element)
+
+  // const container = document.getElementById('container')
+  // container.appendChild(nodeVisualizer.element)
+  // console.log(nodeVisualizer.element)
+
   // document.body.appendChild(nodeVisualizer.element)
   // insert a key
-  node.insert('Chave', {})
-  node.insert('Chave2', {})
-  node.insert('Chave3', {})
+
+  // node.insert('Chave', {})
+  // node.insert('Chave2', {})
+  // node.insert('Chave3', {})
 })

@@ -5,11 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Visualizacao Árvores</title>
     <link rel="stylesheet" href="assets/css/style.css" />
-    <!-- <script src="assets/js/script.js"></script> -->
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/BPlusTree.js"></script>
+    <script src="assets/js/BPlusTreeVisualizer.js"></script>
+    <script src="assets/js/BPlusTreeNode.js"></script>
+    <script src="assets/js/BPlusTreeNodeVisualizer.js"></script>
   </head>
   <body>
+    <div id="container"></div>
+    <canvas id="canvas"></canvas>
+    <!-- <script src="assets/js/script.js"></script> -->
     <div id="tree">
-      <canvas id="canvas"></canvas>
       <div class="level">
         <div class="level-number">1</div>
         <div class="level-nodes">

@@ -166,6 +166,7 @@ class BPlusTree extends Observable {
   }
 
   insert(value, pointer) {
+    console.log('insert', value, pointer)
     let leafNode
     if (this.isEmpty()) {
       this.root = this.createNodeFunction(this.fanout, true)
@@ -177,8 +178,9 @@ class BPlusTree extends Observable {
     leafNode.insert(value, pointer)
 
     if (!leafNode.isNodeOverfull()) return
-    const rightNode = leafNode.split()
-    console.log('insertParent')
-    this.insertParent(leafNode, rightNode.mostLeftKey(), rightNode)
+    const rightNode = this.createNodeFunction(this.fanout, true)
+    leafNode.split(rightNode)
+    console.log('insertParent', leafNode, rightNode)
+    // this.insertParent(leafNode, rightNode.mostLeftKey(), rightNode)
   }
 }

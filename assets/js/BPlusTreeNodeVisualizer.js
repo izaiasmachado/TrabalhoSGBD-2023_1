@@ -15,7 +15,7 @@ class BPlusTreeNodeVisualizer {
 
   listenerFunction(payload) {
     const { type, data } = payload
-
+    console.log(type, data)
     switch (type) {
       case 'insertKey':
         this.insertKey(data)
@@ -71,11 +71,12 @@ window.addEventListener('load', () => {
   const tree = new BPlusTree(6)
   const treeVisualizer = new BPlusTreeVisualizer(tree)
 
-  tree.insert('Chave5', {})
-  tree.insert('Chave3', {})
-  tree.insert('Chave2', {})
-  tree.insert('Chave1', {})
-  tree.insert('Chave4', {})
+  tree.insert('Chave5', 'C5')
+  tree.insert('Chave3', 'C3')
+  tree.insert('Chave2', 'C2')
+  tree.insert('Chave1', 'C1')
+  tree.insert('Chave4', 'C4')
+  tree.insert('Chave6', 'C6')
 
   console.log(tree)
 

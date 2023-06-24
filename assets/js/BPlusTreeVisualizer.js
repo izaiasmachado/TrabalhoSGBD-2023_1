@@ -24,6 +24,8 @@ class LevelVisualizer {
     this.levelNodes.forEach(node => {
       this.levelNodesElement.appendChild(node.element)
     })
+
+    this.render()
   }
 
   createElement() {
@@ -123,7 +125,8 @@ class BPlusTreeVisualizer {
         break
     }
 
-    if (type !== 'createNewNode') {
+    if (type !== 'createdNewNode') {
+      console.log('>', type, data)
       this.render()
     }
   }

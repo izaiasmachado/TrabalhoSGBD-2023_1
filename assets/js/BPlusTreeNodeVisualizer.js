@@ -66,38 +66,3 @@ class BPlusTreeNodeVisualizer {
     keyElement.classList.remove('highlight')
   }
 }
-
-window.addEventListener('load', () => {
-  const tree = new BPlusTree(7)
-  const treeVisualizer = new BPlusTreeVisualizer(tree)
-
-  tree.insert('Chave5', 'C5')
-  tree.insert('Chave3', 'C3')
-  tree.insert('Chave2', 'C2')
-  tree.insert('Chave8', 'C8')
-  tree.insert('Chave1', 'C1')
-  tree.insert('Chave4', 'C4')
-  tree.insert('Chave6', 'C6')
-  tree.insert('Chave7', 'C7')
-
-  console.log('aqq', tree)
-
-  // create a BPlusTree
-  // create a BPlusTreeNodeVisualizer
-
-  // const node = new BPlusTreeNode(3)
-  // const nodeVisualizer = new BPlusTreeNodeVisualizer(node)
-
-  // append nodeVisualizer.element to the DOM
-
-  // const container = document.getElementById('container')
-  // container.appendChild(nodeVisualizer.element)
-  // console.log(nodeVisualizer.element)
-
-  // document.body.appendChild(nodeVisualizer.element)
-  // insert a key
-
-  // node.insert('Chave', {})
-  // node.insert('Chave2', {})
-  // node.insert('Chave3', {})
-})

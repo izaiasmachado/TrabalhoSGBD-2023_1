@@ -40,24 +40,14 @@ class BPlusTreeNode extends BaseNode {
     return this.pointers[lastNonNullPointerIndex]
   }
 
-  insert(value, pointer) {
-    const i = this.keys.findIndex(k => value <= k)
-
-    // Caso a chave seja menor que uma das chaves do nó
-    // então a chave é inserida na posição i
-    // e o ponteiro da posição i é deslocado para a direita\
-    // Caso a chave seja maior que todas as chaves do nó
-    // então o último ponteiro é o nó que contém a chave
-    const insertKeyIndex = i !== -1 ? i : this.keys.length
-    this.keys.splice(insertKeyIndex, 0, value)
-    this.pointers.splice(insertKeyIndex, 0, pointer)
+  insert(value, pointer, index) {
     this.notifyAll({
       type: 'insertKey',
       node: this,
       data: {
         key: {
           value,
-          index: insertKeyIndex,
+          index,
         },
         pointer,
       },
@@ -117,17 +107,7 @@ class InternalNode extends BPlusTreeNode {
 
     this.keys.splice(insertKeyIndex, 0, value)
     this.pointers.splice(insertKeyIndex + 1, 0, pointer)
-    this.notifyAll({
-      type: 'insertKey',
-      node: this,
-      data: {
-        key: {
-          value,
-          index: insertKeyIndex,
-        },
-        pointer,
-      },
-    })
+    super.insert(value, pointer, insertKeyIndex)
   }
 
   delete(value) {
@@ -168,6 +148,21 @@ class InternalNode extends BPlusTreeNode {
 class LeafNode extends BPlusTreeNode {
   constructor(fanout) {
     super(fanout)
+  }
+
+  insert(value, pointer) {
+    const i = this.keys.findIndex(k => value <= k)
+
+    // Caso a chave seja menor que uma das chaves do nó
+    // então a chave é inserida na posição i
+    // e o ponteiro da posição i é deslocado para a direita\
+    // Caso a chave seja maior que todas as chaves do nó
+    // então o último ponteiro é o nó que contém a chave
+    const insertKeyIndex = i !== -1 ? i : this.keys.length
+    this.keys.splice(insertKeyIndex, 0, value)
+    this.pointers.splice(insertKeyIndex, 0, pointer)
+
+    super.insert(value, pointer, insertKeyIndex)
   }
 
   /**

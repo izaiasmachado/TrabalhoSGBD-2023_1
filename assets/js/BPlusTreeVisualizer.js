@@ -3,20 +3,21 @@
  * Caso o level seja modificado, então o level é atualizado.
  */
 class LevelVisualizer {
-  constructor(levelNodes = []) {
+  constructor(levelNodes = [], levelNumber = 0) {
     this.levelNodes = levelNodes
-    this.levelNumber = 0
     this.init()
-  }
-
-  setLevelNumber(levelNumber) {
-    this.levelNumber = levelNumber
+    this.setLevelNumber(levelNumber)
   }
 
   init() {
     this.createElement()
     const updateLevelNodesFixedScope = this.updateLevelNodes.bind(this)
     createArrayObserver(this.levelNodes, () => updateLevelNodesFixedScope())
+  }
+
+  setLevelNumber(levelNumber) {
+    this.levelNumber = levelNumber
+    this.levelNumberElement.innerText = this.levelNumber
   }
 
   updateLevelNodes() {
@@ -56,14 +57,33 @@ class BPlusTreeVisualizer {
   constructor(tree) {
     this.tree = tree
     this.levels = []
-    this.init()
     this.nodeVisualizers = {}
+    this.init()
   }
 
   createRoot(data) {
     const { node } = data
     this.levels.unshift([node])
-    this.render()
+  }
+
+  createNode(data) {
+    const { node, leftNode, level } = data
+
+    if (!this.levels[level]) {
+      this.levels[level] = []
+    }
+
+    /**
+     * O nó é inserido no level correspondente
+     * e o level é renderizado novamente.
+     *
+     * O nó é inserido na posição do nó da esquerda + 1
+     * pois o nó da esquerda é o nó que foi dividido.
+     */
+    const insertionIndex =
+      this.levels[level].findIndex(n => n.id === leftNode.id) + 1
+
+    this.levels[level].splice(insertionIndex, 0, node)
   }
 
   createVisualizer(data) {
@@ -96,8 +116,15 @@ class BPlusTreeVisualizer {
       case 'createRoot':
         this.createRoot(data)
         break
+      case 'createNode':
+        this.createNode(data)
+        break
       default:
         break
+    }
+
+    if (type !== 'createNewNode') {
+      this.render()
     }
   }
 
@@ -108,7 +135,7 @@ class BPlusTreeVisualizer {
 
     this.levels.forEach((level, index) => {
       const nodeVisualizers = level.map(node => this.nodeVisualizers[node.id])
-      const levelVisualizer = new LevelVisualizer(nodeVisualizers)
+      const levelVisualizer = new LevelVisualizer(nodeVisualizers, index)
       levelVisualizer.setLevelNumber(index)
       levelVisualizer.render()
       this.element.appendChild(levelVisualizer.element)

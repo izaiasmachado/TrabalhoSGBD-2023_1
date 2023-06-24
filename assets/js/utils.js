@@ -7,13 +7,18 @@ function uuidv4() {
   )
 }
 
-function createArrayObserver(array, renderFunction) {
+function createArrayObserver(array, onSizeChange) {
   return new Proxy(array, {
     set(target, property, value, receiver) {
-      target[property] = value
-      renderFunction()
+      const oldLength = target.length
+      const result = Reflect.set(target, property, value, receiver)
+      const newLength = target.length
 
-      return true
+      if (oldLength !== newLength) {
+        onSizeChange(newLength)
+      }
+
+      return result
     },
   })
 }

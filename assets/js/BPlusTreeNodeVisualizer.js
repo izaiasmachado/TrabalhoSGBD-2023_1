@@ -68,7 +68,7 @@ class BPlusTreeNodeVisualizer {
 }
 
 window.addEventListener('load', () => {
-  const tree = new BPlusTree(3)
+  const tree = new BPlusTree(7)
   const treeVisualizer = new BPlusTreeVisualizer(tree)
 
   tree.insert('Chave5', 'C5')

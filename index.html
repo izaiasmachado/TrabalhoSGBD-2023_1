@@ -10,6 +10,9 @@
     <script src="assets/js/BPlusTreeVisualizer.js"></script>
     <script src="assets/js/BPlusTreeNode.js"></script>
     <script src="assets/js/BPlusTreeNodeVisualizer.js"></script>
+    <script src="assets/js/Controlls.js"></script>
+    <script src="assets/js/ControllsListener.js"></script>
+    <script src="assets/js/scripts.js"></script>
 
     <link rel="stylesheet" href="assets/css/SearchNavStyle/TypeInput.css" />
     <link rel="stylesheet" href="assets/css/SearchNavStyle/SearchBar.css" />
@@ -36,10 +39,15 @@
         </label>
       </div>
       <div id="manual-container">
-        <input class="input-bar" type="number" placeholder="Digite o índice" />
-        <button class="input-button">Inserir</button>
-        <button class="input-button">Buscar</button>
-        <button class="input-button">Deletar</button>
+        <input
+          class="input-bar"
+          id="manual-input-key"
+          type="number"
+          placeholder="Digite uma chave"
+        />
+        <button class="input-button" id="manual-insert-button">Inserir</button>
+        <button class="input-button" id="manual-search-button">Buscar</button>
+        <button class="input-button" id="manual-delete-button">Deletar</button>
       </div>
       <div id="random-container">
         <input class="input-bar" type="number" placeholder="Índice inicial" />

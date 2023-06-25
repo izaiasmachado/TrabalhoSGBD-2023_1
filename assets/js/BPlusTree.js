@@ -32,7 +32,9 @@ class BPlusTree extends Observable {
 
       if (i !== -1) return level + 1
 
-      c = c.pointers.find(p => p.mostLeftKey() <= node.mostLeftKey())
+      c = c.pointers.find(p =>
+        isLowerOrEqual(p.mostLeftKey(), node.mostLeftKey()),
+      )
       level++
     }
 
@@ -90,7 +92,7 @@ class BPlusTree extends Observable {
     let c = this.root
 
     while (c instanceof InternalNode) {
-      const i = c.keys.findIndex(k => value <= k)
+      const i = c.keys.findIndex(k => isLowerOrEqual(value, k))
       // Menor índice tal que value <= c.keys[i]
       // De modo que se value > c.keys[i] então i = -1
       if (i === -1) {
@@ -123,15 +125,32 @@ class BPlusTree extends Observable {
    */
   parent(node) {
     let c = this.root
+    let parent = null
 
     while (c instanceof InternalNode) {
       const i = c.pointers.findIndex(p => p === node)
 
-      if (i !== -1) return c
-      c = c.pointers.find(p => p.mostLeftKey() <= node.mostLeftKey())
+      if (i !== -1) {
+        parent = c
+        break
+      }
+
+      const nextNode = c.pointers.find(
+        p =>
+          p !== null &&
+          p !== undefined &&
+          isLowerOrEqual(p.mostLeftKey(), node.mostLeftKey()),
+      )
+
+      if (!nextNode) {
+        parent = c
+        break
+      }
+
+      c = nextNode
     }
 
-    return c
+    return parent
   }
 
   insertParent(node, newKey, newNode) {
@@ -167,9 +186,9 @@ class BPlusTree extends Observable {
     this.notifyAll({
       type: 'createNode',
       data: {
-        leftNode: leafNode,
+        leftNode: parent,
         node: rightNode,
-        level: this.getNodeLevel(leafNode),
+        level: this.getNodeLevel(node),
       },
     })
 
@@ -191,7 +210,10 @@ class BPlusTree extends Observable {
       })
     } else {
       leafNode = this.findSupposedLeafNode(value)
+      console.log('> leafNode', leafNode.clone())
     }
+
+    console.log('Tree', this)
 
     if (leafNode.keys.length < leafNode.fanout - 1) {
       leafNode.insert(value, pointer)

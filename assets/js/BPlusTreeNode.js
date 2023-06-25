@@ -84,7 +84,7 @@ class InternalNode extends BPlusTreeNode {
   }
 
   insert(value, pointer) {
-    const i = this.keys.findIndex(k => value <= k)
+    const i = this.keys.findIndex(k => isLowerOrEqual(value, k))
 
     // Caso a chave seja menor que uma das chaves do nó
     // então a chave é inserida na posição i
@@ -100,7 +100,7 @@ class InternalNode extends BPlusTreeNode {
   }
 
   delete(value) {
-    const i = this.keys.findIndex(k => value <= k)
+    const i = this.keys.findIndex(k => isLowerOrEqual(value, k))
 
     // Caso a chave seja igual a uma das chaves do nó
     // então a chave é removida da posição i
@@ -132,7 +132,7 @@ class LeafNode extends BPlusTreeNode {
   }
 
   insert(value, pointer) {
-    const i = this.keys.findIndex(k => value <= k)
+    const i = this.keys.findIndex(k => isLowerOrEqual(value, k))
 
     // Caso a chave seja menor que uma das chaves do nó
     // então a chave é inserida na posição i
@@ -147,7 +147,7 @@ class LeafNode extends BPlusTreeNode {
   }
 
   delete(value) {
-    const i = this.keys.findIndex(k => value <= k)
+    const i = this.keys.findIndex(k => isLowerOrEqual(value, k))
 
     // Caso a chave seja igual a uma das chaves do nó
     // então a chave é removida da posição i
@@ -164,15 +164,14 @@ class LeafNode extends BPlusTreeNode {
   /**
    * Divide o nó em dois e retorna o nó da direita
    */
-  split(rightNode) {
+  split(rightSibling) {
     const middleIndex = Math.ceil(this.fanout / 2)
     const keysRightNode = this.keys.slice(middleIndex)
     const pointersRightNode = this.pointers.slice(middleIndex)
 
-    keysRightNode.forEach(key => this.delete(key))
-
     keysRightNode.forEach((key, index) => {
-      rightNode.insert(key, pointersRightNode[index])
+      rightSibling.insert(key, pointersRightNode[index])
+      this.delete(key)
     })
   }
 }

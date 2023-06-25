@@ -22,6 +22,7 @@ class LevelVisualizer {
 
   updateLevelNodes() {
     this.levelNodes.forEach(node => {
+      if (!node || !node.element) return
       this.levelNodesElement.appendChild(node.element)
     })
 
@@ -72,8 +73,10 @@ class BPlusTreeVisualizer {
   createNode(data) {
     const { node, leftNode, level } = data
 
-    if (level === this.levels.length) {
+    // Caso o nó seja o primeiro da árvore
+    if (this.levels.length === level) {
       this.levels.push([node])
+      return
     }
 
     const levelIndex = this.levels.findIndex(l => l.includes(leftNode))

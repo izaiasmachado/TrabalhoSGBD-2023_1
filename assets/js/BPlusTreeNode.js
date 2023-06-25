@@ -51,6 +51,10 @@ class BPlusTreeNode extends BaseNode {
     return this.keys.includes(key)
   }
 
+  nonNullPointers() {
+    return this.pointers.filter(p => p !== null)
+  }
+
   lastNonNullPointer() {
     const validPointers = this.pointers.filter(p => p !== null)
     const lastNonNullPointerIndex = validPointers.length - 1

@@ -79,9 +79,9 @@ class BPlusTree extends Observable {
   }
 
   parent(node) {
-    function findParent(currentNode, targetNode) {
+    const findParent = (currentNode, targetNode) => {
       if (currentNode === null || currentNode === undefined) {
-        return null // O nó não foi encontrado na árvore
+        return null // The node was not found in the tree
       }
 
       if (
@@ -90,17 +90,19 @@ class BPlusTree extends Observable {
           pointer => pointer && pointer.id === targetNode.id,
         )
       ) {
-        return currentNode // Encontrou o pai do nó desejado
+        return currentNode // Found the parent of the desired node
       }
 
-      for (const pointer of currentNode.pointers || []) {
-        const parent = findParent(pointer, targetNode) // Chamada recursiva para cada filho
-        if (parent !== null) {
-          return parent // O pai foi encontrado em um dos filhos
+      if (currentNode.pointers) {
+        for (const pointer of currentNode.pointers) {
+          const parent = findParent(pointer, targetNode) // Recursive call for each child
+          if (parent !== null) {
+            return parent // The parent was found in one of the children
+          }
         }
       }
 
-      return null // O pai não foi encontrado
+      return null // The parent was not found
     }
 
     return findParent(this.root, node)
@@ -189,18 +191,29 @@ class BPlusTree extends Observable {
   delete(value, pointer) {
     const leafNode = this.find(value)
     if (leafNode === null) return
-
+    console.log('leafNode', leafNode.clone())
     this.deleteEntry(value, pointer, leafNode)
   }
 
   deleteEntry(value, pointer, node) {
-    node.delete(value, pointer)
+    console.log('=== deleteEntry ===', value, node.clone())
+
     /**
-     * Caso seja raiz e o nó só tiver um nó filho,
-     * então o nó filho vira a raiz e N é nó é removido
+     * Deleta a chave do nó
      */
-    if (node === this.root && node.pointers.length <= 1) {
-      this.root = node.pointers[0]
+    node.delete(value, pointer)
+
+    console.log('=== deleteEntry ===', value, node.clone())
+
+    if (node === this.root && node.pointers.length == 1) {
+      /**
+       * Caso seja raiz e o nó só tiver um nó filho,
+       * então o nó filho vira a raiz e N é nó é removido
+       */
+      console.log('É raiz e só tem um filho', node.clone())
+      // this.root = node.pointers[0]
+      this.root = node.nonNullPointers()[0]
+      console.log('Nova raiz', this.root.clone())
 
       this.notifyAll({
         type: 'deleteRoot',
@@ -208,23 +221,36 @@ class BPlusTree extends Observable {
           node,
         },
       })
-    } else if (!node.hasMinimumKeys()) {
+    } else if (node.pointers.length < Math.ceil(this.fanout / 2)) {
+      console.log('Nó tem menos que o mínimo de chaves', node.clone())
       /**
        * Caso o nó não seja raiz e o nó tiver menos que o mínimo de chaves
        * então o nó é combinado com um de seus irmãos
        */
       const parent = this.parent(node)
+      if (parent === null) {
+        console.log('parent is null', node.clone())
+        return
+      }
+      console.log('parent', parent.clone())
       const index = parent.pointers.findIndex(p => p === node)
+      console.log('index', index)
       let sibling = parent.pointers[index - 1] || parent.pointers[index + 1]
+      console.log('sibling', sibling.clone())
       const sumOfKeys = node.keys.length + sibling.keys.length
+      console.log('sumOfKeys', sumOfKeys)
       const initialNodeLevel = this.getNodeLevel(node)
-
+      const isNodePredecessorSibling = isLowerOrEqual(
+        node.mostLeftKey(),
+        sibling.mostLeftKey(),
+      )
       /**
        * K' é o valor da chave que está no nó pai e que separa os nós
        * node e sibling
        */
 
       const k = parent.keys[index - 1] || parent.keys[index]
+      console.log('k', k)
 
       /**
        * Se a soma das chaves do nó e do irmão for menor
@@ -233,9 +259,8 @@ class BPlusTree extends Observable {
        */
       if (sumOfKeys <= node.fanout - 1) {
         // isNodePredecessorSibling é true se o nó for o irmão mais a esquerda
-        const isNodePredecessorSibling = index - 1 >= 0
-
         if (isNodePredecessorSibling) {
+          console.log('swap node e sibling')
           // swap node e sibling
           const temp = node
           node = sibling
@@ -243,10 +268,12 @@ class BPlusTree extends Observable {
         }
 
         if (node instanceof InternalNode) {
+          console.log('node instanceof InternalNode')
           // append K' e os ponteiros do nó no irmão
           sibling.insert(k, node.pointers[0])
-          sibling.pointers = sibling.pointers.concat(node.pointers.slice(1))
+          sibling.pointers = sibling.pointers.concat(node.nonNullPointers())
         } else {
+          console.log('node instanceof LeafNode')
           const nodeKeys = node.keys
           const nodePointers = node.pointers
 
@@ -263,15 +290,11 @@ class BPlusTree extends Observable {
             },
           })
         }
+
+        this.deleteEntry(k, node, parent)
       } else {
         parent.redistribute(node, sibling)
       }
-    } else {
-      /**
-       * Caso contrário, o nó é redistribuído,
-       * pegando emprestado uma chave do irmão
-       */
-      parent.redistribute(node, sibling)
     }
   }
 }

@@ -185,4 +185,56 @@ class BPlusTree extends Observable {
     leafNode.split(rightNode)
     this.insertParent(leafNode, rightNode.mostLeftKey(), rightNode)
   }
+
+  delete(value, pointer) {
+    const leafNode = this.find(value)
+    if (leafNode === null) return
+
+    this.deleteEntry(value, pointer, leafNode)
+  }
+
+  deleteEntry(value, pointer, node) {
+    node.delete(value, pointer)
+    /**
+     * Caso seja raiz e o nó só tiver um nó filho,
+     * então o nó filho vira a raiz e N é nó é removido
+     */
+    if (node === this.root && node.pointers.length === 1) {
+      this.root = node.pointers[0]
+
+      this.notifyAll({
+        type: 'deleteRoot',
+        data: {
+          node,
+        },
+      })
+    } else if (!node.hasMinimumKeys()) {
+      /**
+       * Caso o nó não seja raiz e o nó tiver menos que o mínimo de chaves
+       * então o nó é combinado com um de seus irmãos
+       */
+      const parent = this.parent(node)
+      const index = parent.pointers.findIndex(p => p === node)
+      let sibling = parent.pointers[index - 1] || parent.pointers[index + 1]
+      const sumOfKeys = node.keys.length + sibling.keys.length
+
+      /**
+       * Se a soma das chaves do nó e do irmão for menor
+       * ou igual ao máximo de chaves em um nó, então os nós são combinados
+       * e o nó pai é removido
+       */
+      if (sumOfKeys <= node.fanout - 1) {
+      } else {
+        console.log('redistribui os nós', node, sibling)
+        parent.redistribute(node, sibling)
+      }
+    } else {
+      console.log('redistribui os nós', node, sibling)
+      /**
+       * Caso contrário, o nó é redistribuído,
+       * pegando emprestado uma chave do irmão
+       */
+      parent.redistribute(node, sibling)
+    }
+  }
 }

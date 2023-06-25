@@ -22,12 +22,29 @@ class BPlusTreeNode extends BaseNode {
     return this.keys[0]
   }
 
+  mostLeftPointer() {
+    return this.pointers[0]
+  }
+
+  mostRightKey() {
+    return this.keys[this.keys.length - 1]
+  }
+
+  mostRightPointer() {
+    return this.pointers[this.pointers.length - 1]
+  }
+
   isNodeFull() {
     return this.keys.length === this.fanout - 1
   }
 
   isNodeOverfull() {
     return this.keys.length >= this.fanout
+  }
+
+  hasMinimumKeys() {
+    const minimumKeys = Math.ceil((this.fanout - 1) / 2)
+    return this.keys.length >= minimumKeys
   }
 
   hasKey(key) {
@@ -75,6 +92,37 @@ class BPlusTreeNode extends BaseNode {
       }),
     )
     return clone
+  }
+
+  /**
+   * Sabendo que o nó tem menos que o mínimo de chaves,
+   * então o nó é combinado com um de seus irmãos
+   */
+  redistribute(node, sibling) {
+    const isNodeToTheLeft = isLowerOrEqual(
+      node.mostLeftKey(),
+      sibling.mostLeftKey(),
+    )
+
+    /**
+     * Caso o nó seja o irmão mais a esquerda,
+     * então o nó pega emprestado a chave mais esquerda do irmão
+     *
+     * Caso o nó seja o irmão mais a direita,
+     * então o nó pega emprestado a chave mais direita do irmão
+     */
+    const borrowedKey = isNodeToTheLeft
+      ? sibling.mostLeftKey()
+      : sibling.mostRightKey()
+    const borrowedPointer = isNodeToTheLeft
+      ? sibling.mostLeftPointer()
+      : sibling.mostRightPointer()
+
+    // Remover o nó mais da direita do irmão
+    sibling.delete(borrowedKey, borrowedPointer)
+
+    // Inserir a chave e o ponteiro no nó
+    node.insert(borrowedKey, borrowedPointer)
   }
 }
 

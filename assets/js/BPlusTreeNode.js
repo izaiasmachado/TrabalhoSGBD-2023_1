@@ -102,31 +102,19 @@ class BPlusTreeNode extends BaseNode {
    * Sabendo que o nó tem menos que o mínimo de chaves,
    * então o nó é combinado com um de seus irmãos
    */
-  redistribute(node, sibling) {
-    const isNodeToTheLeft = isLowerOrEqual(
-      node.mostLeftKey(),
-      sibling.mostLeftKey(),
-    )
+  redistribute(sibling, parent, k) {
+    const predecessorKey = sibling.mostRightKey()
+    const predecessorPointer = sibling.mostRightPointer()
 
-    /**
-     * Caso o nó seja o irmão mais a esquerda,
-     * então o nó pega emprestado a chave mais esquerda do irmão
-     *
-     * Caso o nó seja o irmão mais a direita,
-     * então o nó pega emprestado a chave mais direita do irmão
-     */
-    const borrowedKey = isNodeToTheLeft
-      ? sibling.mostLeftKey()
-      : sibling.mostRightKey()
-    const borrowedPointer = isNodeToTheLeft
-      ? sibling.mostLeftPointer()
-      : sibling.mostRightPointer()
+    // remova a útima chave do irmão predecessor
+    sibling.delete(predecessorKey, predecessorPointer)
 
-    // Remover o nó mais da direita do irmão
-    sibling.delete(borrowedKey, borrowedPointer)
+    // insira a chave e o ponteiro do predecessor no nó
+    this.insert(k, predecessorPointer)
 
-    // Inserir a chave e o ponteiro no nó
-    node.insert(borrowedKey, borrowedPointer)
+    // atualize a chave do pai
+    const parentKeyIndex = parent.pointers.findIndex(p => p === this)
+    parent.keys[parentKeyIndex] = node.mostLeftKey()
   }
 }
 
@@ -136,19 +124,30 @@ class InternalNode extends BPlusTreeNode {
   }
 
   insert(value, pointer) {
-    const i = this.keys.findIndex(k => isLowerOrEqual(value, k))
+    /**
+     * Dado o valor e o ponteiro, percorra as chaves do nó
+     * até encontrar a posição i em que o valor é menor
+     * que alguma das chaves do nó
+     */
+
+    const i = this.keys.findIndex(k => isLower(value, k))
 
     // Caso a chave seja menor que uma das chaves do nó
     // então a chave é inserida na posição i
     // e o ponteiro da posição i é deslocado para a direita
+
+    if (i !== -1) {
+      this.keys.splice(i, 0, value)
+      this.pointers.splice(i + 1, 0, pointer)
+      super.insert(value, pointer, i)
+      return
+    }
+
     // Caso a chave seja maior que todas as chaves do nó
-    // então o último ponteiro é o nó que contém a chave
-
-    const insertKeyIndex = i !== -1 ? i : this.keys.length
-
-    this.keys.splice(insertKeyIndex, 0, value)
-    this.pointers.splice(insertKeyIndex + 1, 0, pointer)
-    super.insert(value, pointer, insertKeyIndex)
+    // então a chave é inserida na última posição
+    this.keys.push(value)
+    this.pointers.push(pointer)
+    super.insert(value, pointer, i)
   }
 
   delete(value) {
@@ -167,17 +166,24 @@ class InternalNode extends BPlusTreeNode {
   }
 
   split(rightNode) {
+    console.log('=== split ===', this.clone())
     const middleIndex = Math.ceil((this.fanout + 1) / 2)
-    const keysRightNode = this.keys.slice(middleIndex)
-    const pointersRightNode = this.pointers.slice(middleIndex + 1)
+    const keysToInsertInRightNode = this.keys.slice(middleIndex)
+    const pointersToInsertInRightNode = this.pointers.slice(middleIndex + 1)
 
-    keysRightNode.forEach(key => this.delete(key))
-    pointersRightNode.forEach(pointer => {
-      if (pointer !== null) {
-        rightNode.insert(pointer.mostLeftKey(), pointer)
-        this.delete(pointer.mostLeftKey())
-      }
+    keysToInsertInRightNode.forEach((key, index) => {
+      console.log(index, key, pointersToInsertInRightNode[index])
+      const pointer = pointersToInsertInRightNode[index]
+      this.delete(key)
+      rightNode.insert(key, pointer)
     })
+
+    // ultimo ponteiro do nó esquerdo é o primeiro ponteiro do nó direito
+    const lastPointer = this.lastNonNullPointer()
+    rightNode.pointers.unshift(lastPointer)
+
+    // remova o último ponteiro do nó esquerdo
+    this.pointers.pop()
   }
 }
 

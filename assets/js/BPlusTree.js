@@ -33,7 +33,7 @@ class BPlusTree extends Observable {
       if (i !== -1) return level + 1
 
       c = c.pointers.find(p =>
-        isLowerOrEqual(p.mostLeftKey(), node.mostLeftKey()),
+        isLowerOrEqual(p.mostRightKey(), node.mostLeftKey()),
       )
       level++
     }
@@ -241,7 +241,7 @@ class BPlusTree extends Observable {
       console.log('sumOfKeys', sumOfKeys)
       const initialNodeLevel = this.getNodeLevel(node)
       const isNodePredecessorSibling = isLowerOrEqual(
-        node.mostLeftKey(),
+        node.mostRightKey(),
         sibling.mostLeftKey(),
       )
       /**
@@ -278,8 +278,13 @@ class BPlusTree extends Observable {
           const nodePointers = node.pointers
 
           nodePointers.forEach((pointer, index) => {
+            if (pointer === null) return
+            if (nodeKeys[index] === undefined) return
+            node.delete(nodeKeys[index], pointer)
             sibling.insert(nodeKeys[index], pointer)
           })
+
+          sibling.pointers.push(node.pointers[node.pointers.length - 1])
 
           this.deleteEntry(k, node, parent)
           this.notifyAll({
@@ -293,7 +298,16 @@ class BPlusTree extends Observable {
 
         this.deleteEntry(k, node, parent)
       } else {
-        parent.redistribute(node, sibling)
+        const isSiblingPredecessor = isLower(
+          sibling.mostRightKey(),
+          node.mostLeftKey(),
+        )
+
+        if (isSiblingPredecessor) {
+          node.redistribute(sibling, parent, k)
+        } else {
+          sibling.redistribute(node, parent, k)
+        }
       }
     }
   }

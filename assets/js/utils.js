@@ -23,6 +23,21 @@ function createArrayObserver(array, onSizeChange) {
   })
 }
 
+function isLower(a, b) {
+  const parsedA = Number(a)
+  const parsedB = Number(b)
+
+  if (!isNaN(parsedA) && !isNaN(parsedB)) {
+    return parsedA < parsedB
+  }
+
+  if (typeof a === 'string' && typeof b === 'string') {
+    return a < b
+  }
+
+  return false
+}
+
 function isLowerOrEqual(a, b) {
   const parsedA = Number(a)
   const parsedB = Number(b)

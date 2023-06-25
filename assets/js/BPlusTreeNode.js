@@ -120,8 +120,11 @@ class InternalNode extends BPlusTreeNode {
     const pointersRightNode = this.pointers.slice(middleIndex + 1)
 
     keysRightNode.forEach(key => this.delete(key))
-    keysRightNode.forEach((key, index) => {
-      rightNode.insert(key, pointersRightNode[index])
+    pointersRightNode.forEach(pointer => {
+      if (pointer !== null) {
+        rightNode.insert(pointer.mostLeftKey(), pointer)
+        this.delete(pointer.mostLeftKey())
+      }
     })
   }
 }
@@ -169,9 +172,9 @@ class LeafNode extends BPlusTreeNode {
     const keysRightNode = this.keys.slice(middleIndex)
     const pointersRightNode = this.pointers.slice(middleIndex)
 
+    keysRightNode.forEach(key => this.delete(key))
     keysRightNode.forEach((key, index) => {
       rightSibling.insert(key, pointersRightNode[index])
-      this.delete(key)
     })
   }
 }

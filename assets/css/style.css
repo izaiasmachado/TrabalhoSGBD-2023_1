@@ -1,6 +1,6 @@
 /* each level node should be in the same line */
 
-#tree {
+.tree {
   position: relative;
   display: flex;
   flex-direction: column;

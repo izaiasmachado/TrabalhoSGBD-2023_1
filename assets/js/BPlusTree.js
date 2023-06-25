@@ -52,11 +52,11 @@ class BPlusTree extends Observable {
     let c = this.root
 
     while (c instanceof InternalNode) {
-      const i = c.keys.findIndex(k => isLowerOrEqual(value, k))
+      const i = c.keys.findIndex(k => isLower(value, k))
 
       if (i === -1) {
-        // Caso a chave seja maior que todas as chaves do nó
-        // então o último ponteiro é o nó que contém a chave
+        // Caso nenhuma chave seja menor que a chave
+        // então o ponteiro da direita é o nó que deveria conter a chave
         c = c.lastNonNullPointer()
       } else if (value === c.keys[i]) {
         // Caso a chave seja igual a uma das chaves do nó
@@ -65,7 +65,6 @@ class BPlusTree extends Observable {
       } else {
         // Caso a chave seja menor que uma das chaves do nó
         // então o ponteiro da esquerda é o nó que contém a chave
-        // console.log('aquiiiiii', c)
         c = c.pointers[i]
       }
     }

@@ -13,8 +13,15 @@ class BPlusTreeNodeVisualizer {
     this.node.subscribe(payload => this.listenerFunction(payload))
   }
 
-  listenerFunction(payload) {
-    const { type, data } = payload
+  listenerFunction(event) {
+    const eventQueue = EventQueue.getInstance()
+    const bind = this.executeEvent.bind(this)
+    event.callback = event => bind(event)
+    eventQueue.enqueue(event)
+  }
+
+  executeEvent(event) {
+    const { type, data } = event
 
     switch (type) {
       case 'insertKey':

@@ -1,9 +1,14 @@
 window.addEventListener('load', () => {
-  //   const controls = new Controlls()
+  const eventProcessor = EventProcessor.getInstance()
+  const eventQueue = EventQueue.getInstance()
 
   const tree2 = new BPlusTree(4)
   const treeVisualizer = new BPlusTreeVisualizer(tree2)
   const controllsListener = new ControllsListener(tree2)
+
+  console.log('tree2', tree2)
+  console.log(JSON.stringify(tree2, null, 2))
+  // tree2.insert('12')
 
   // tree2.insert('Brandt')
   // tree2.insert('Califieri')
@@ -18,8 +23,6 @@ window.addEventListener('load', () => {
   // tree2.insert('Singh')
   // tree2.insert('Srinivasan')
   // tree2.insert('Wu')
-
-  console.log(tree2)
 
   // tree.insert('Chave5', 'C5')
   // tree.insert('Chave3', 'C3')

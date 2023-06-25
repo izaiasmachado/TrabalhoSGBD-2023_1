@@ -102,13 +102,24 @@ class BPlusTreeVisualizer {
     container.appendChild(this.element)
   }
 
-  listenerFunction(payload) {
-    const { type, data } = payload
+  listenerFunction(event) {
+    // O evento de criação de um novo nó é tratado de forma diferente
+    // não modifica a interface
+    if (event.type === 'createdNewNode') {
+      this.createVisualizer(event.data)
+      return
+    }
+
+    const eventQueue = EventQueue.getInstance()
+    const bind = this.executeEvent.bind(this)
+    event.callback = event => bind(event)
+    eventQueue.enqueue(event)
+  }
+
+  executeEvent(event) {
+    const { type, data } = event
 
     switch (type) {
-      case 'createdNewNode':
-        this.createVisualizer(data)
-        break
       case 'createRoot':
         this.createRoot(data)
         break

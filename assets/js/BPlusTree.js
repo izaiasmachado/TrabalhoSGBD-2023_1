@@ -41,46 +41,6 @@ class BPlusTree extends Observable {
     return level
   }
 
-  // imprime a árvore em JSON
-  toJSON() {
-    // {
-    //   id: 1,
-    // keys: ['a', 'b'],
-    // children: [
-    //   { id: 2, keys: ['c', 'd'], children: [] },
-    //   { id: 3, keys: ['e', 'f'], children: [] },
-    //   { id: 4, keys: ['g', 'h'], children: [] },
-    // ]
-    // }
-    const root = this.root
-    if (root === null) return null
-
-    const queue = [root]
-    const tree = { id: 1, keys: root.keys, children: [] }
-
-    while (queue.length > 0) {
-      const node = queue.shift()
-
-      if (node instanceof InternalNode) {
-        const children = node.pointers.filter(
-          p => p !== null && p !== undefined,
-        )
-        // const childrenKeys = children.map(c => c.keys)
-
-        const childrenNodes = children.map(c => {
-          // const id =
-          return { keys: c.keys, children: [] }
-        })
-
-        tree.children.push(...childrenNodes)
-
-        queue.push(...children)
-      }
-    }
-
-    return tree
-  }
-
   isEmpty() {
     return this.root === null
   }
@@ -93,8 +53,7 @@ class BPlusTree extends Observable {
 
     while (c instanceof InternalNode) {
       const i = c.keys.findIndex(k => isLowerOrEqual(value, k))
-      // Menor índice tal que value <= c.keys[i]
-      // De modo que se value > c.keys[i] então i = -1
+
       if (i === -1) {
         // Caso a chave seja maior que todas as chaves do nó
         // então o último ponteiro é o nó que contém a chave
@@ -120,37 +79,32 @@ class BPlusTree extends Observable {
     return null
   }
 
-  /**
-   * Encotra o nó pai de um nó
-   */
   parent(node) {
-    let c = this.root
-    let parent = null
-
-    while (c instanceof InternalNode) {
-      const i = c.pointers.findIndex(p => p === node)
-
-      if (i !== -1) {
-        parent = c
-        break
+    function findParent(currentNode, targetNode) {
+      if (currentNode === null || currentNode === undefined) {
+        return null // O nó não foi encontrado na árvore
       }
 
-      const nextNode = c.pointers.find(
-        p =>
-          p !== null &&
-          p !== undefined &&
-          isLowerOrEqual(p.mostLeftKey(), node.mostLeftKey()),
-      )
-
-      if (!nextNode) {
-        parent = c
-        break
+      if (
+        currentNode.pointers &&
+        currentNode.pointers.some(
+          pointer => pointer && pointer.id === targetNode.id,
+        )
+      ) {
+        return currentNode // Encontrou o pai do nó desejado
       }
 
-      c = nextNode
+      for (const pointer of currentNode.pointers || []) {
+        const parent = findParent(pointer, targetNode) // Chamada recursiva para cada filho
+        if (parent !== null) {
+          return parent // O pai foi encontrado em um dos filhos
+        }
+      }
+
+      return null // O pai não foi encontrado
     }
 
-    return parent
+    return findParent(this.root, node)
   }
 
   insertParent(node, newKey, newNode) {
@@ -210,10 +164,7 @@ class BPlusTree extends Observable {
       })
     } else {
       leafNode = this.findSupposedLeafNode(value)
-      console.log('> leafNode', leafNode.clone())
     }
-
-    console.log('Tree', this)
 
     if (leafNode.keys.length < leafNode.fanout - 1) {
       leafNode.insert(value, pointer)

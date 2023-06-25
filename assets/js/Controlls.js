@@ -32,12 +32,6 @@ class Controlls extends Observable {
   }
 
   handleManualAction(data) {
-    console.log({
-      type: 'manual',
-      action: data.action,
-      value: data.value,
-    })
-
     this.notifyAll({
       type: 'manual',
       action: data.action,

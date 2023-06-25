@@ -60,6 +60,7 @@ class BPlusTreeVisualizer {
     this.tree = tree
     this.levels = []
     this.nodeVisualizers = {}
+    this.nodes = []
     this.init()
   }
 
@@ -71,21 +72,14 @@ class BPlusTreeVisualizer {
   createNode(data) {
     const { node, leftNode, level } = data
 
-    if (!this.levels[level]) {
-      this.levels[level] = []
+    if (level === this.levels.length) {
+      this.levels.push([node])
     }
 
-    /**
-     * O nó é inserido no level correspondente
-     * e o level é renderizado novamente.
-     *
-     * O nó é inserido na posição do nó da esquerda + 1
-     * pois o nó da esquerda é o nó que foi dividido.
-     */
-    const insertionIndex =
-      this.levels[level].findIndex(n => n.id === leftNode.id) + 1
+    const levelIndex = this.levels.findIndex(l => l.includes(leftNode))
+    const nodeIndex = this.levels[levelIndex].findIndex(n => n === leftNode)
 
-    this.levels[level].splice(insertionIndex, 0, node)
+    this.levels[levelIndex].splice(nodeIndex + 1, 0, node)
   }
 
   createVisualizer(data) {
@@ -125,10 +119,7 @@ class BPlusTreeVisualizer {
         break
     }
 
-    if (type !== 'createdNewNode') {
-      console.log('>', type, data)
-      this.render()
-    }
+    this.render()
   }
 
   render() {

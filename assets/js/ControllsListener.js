@@ -13,7 +13,7 @@ class ControllsListener {
   }
 
   handleButtonPress(data) {
-    console.log('handleButtonPress', data)
+    // console.log('handleButtonPress', data)
     const { type } = data
 
     switch (type) {
@@ -30,7 +30,7 @@ class ControllsListener {
 
   handleManualAction(data) {
     const { action, value } = data
-    console.log('handleManualAction', data)
+    // console.log('handleManualAction', data)
     const pointerUUID = uuidv4()
 
     switch (action) {

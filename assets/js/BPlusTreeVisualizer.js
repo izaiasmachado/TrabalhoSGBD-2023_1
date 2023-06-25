@@ -94,8 +94,7 @@ class BPlusTreeVisualizer {
 
   deleteNode(data) {
     const { node, level } = data
-    const nodeIndex = this.levels[level].findIndex(n => n === node)
-    this.levels[level].splice(nodeIndex, 1)
+    this.levels[level] = this.levels[level].filter(n => n !== node)
     delete this.nodeVisualizers[node.id]
   }
 
@@ -135,7 +134,7 @@ class BPlusTreeVisualizer {
 
   executeEvent(event) {
     const { type, data } = event
-    console.log('====== executeEvent', type, data)
+
     switch (type) {
       case 'createRoot':
         this.createRoot(data)

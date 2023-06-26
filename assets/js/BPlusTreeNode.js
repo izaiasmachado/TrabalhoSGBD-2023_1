@@ -122,7 +122,16 @@ class BPlusTreeNode extends BaseNode {
 
     if (value !== this.keys[i]) return
     this.keys.splice(i, 1)
-    this.delete(value)
+
+    this.notifyAll({
+      type: 'deleteKey',
+      data: {
+        node: this,
+        key: {
+          value,
+        },
+      },
+    })
   }
 }
 
@@ -179,8 +188,6 @@ class InternalNode extends BPlusTreeNode {
     const keysToInsertInRightNode = this.keys.slice(middleIndex)
     const pointersToInsertInRightNode = this.pointers.slice(pointersMiddleIndex)
 
-    console.log('ANTES', this.keys.slice())
-
     keysToInsertInRightNode.forEach((key, index) => {
       const pointer = pointersToInsertInRightNode[index]
       this.delete(key)
@@ -188,13 +195,7 @@ class InternalNode extends BPlusTreeNode {
     })
 
     const k2 = rightNode.mostLeftKey()
-    console.log(' == DEPOIS DO SPLIT DE NO INTERNO == ')
-    console.log('rightNode', rightNode.keys.slice())
-    console.log('chave deletada', k2)
     rightNode.deleteKey(k2)
-
-    console.log('this', this.keys.slice())
-    console.log('rightNode', rightNode.keys.slice())
     return k2
   }
 }
@@ -215,7 +216,6 @@ class LeafNode extends BPlusTreeNode {
     const insertKeyIndex = i !== -1 ? i : this.keys.length
     this.keys.splice(insertKeyIndex, 0, value)
     this.pointers.splice(insertKeyIndex, 0, pointer)
-
     super.insert(value, pointer, insertKeyIndex)
   }
 

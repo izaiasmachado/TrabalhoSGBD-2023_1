@@ -52,7 +52,9 @@ class BPlusTreeNode extends BaseNode {
   }
 
   nonNullPointers() {
-    return this.pointers.filter(p => p !== null)
+    return this.pointers.filter(
+      p => p !== null && p.keys.length > 0 && p.pointers.length > 0,
+    )
   }
 
   lastNonNullPointer() {
@@ -71,6 +73,23 @@ class BPlusTreeNode extends BaseNode {
           index,
         },
         pointer,
+      },
+    })
+  }
+
+  insertKey(value) {
+    const i = this.keys.findIndex(k => isLowerOrEqual(value, k))
+    const insertKeyIndex = i !== -1 ? i : this.keys.length
+    this.keys.splice(insertKeyIndex, 0, value)
+
+    this.notifyAll({
+      type: 'insertKey',
+      data: {
+        node: this,
+        key: {
+          value,
+          index: insertKeyIndex,
+        },
       },
     })
   }
@@ -164,10 +183,10 @@ class BPlusTreeNode extends BaseNode {
       console.log('predecessorPointer', predecessorPointer)
 
       // remova a útima chave do irmão predecessor
-      this.delete(predecessorKey, predecessorPointer)
+      sibling.delete(predecessorKey, predecessorPointer)
 
       // insira a chave e o ponteiro do predecessor no nó
-      sibling.insert(predecessorKey, predecessorPointer)
+      this.insert(predecessorKey, predecessorPointer)
 
       console.log('this', this.keys.slice())
 

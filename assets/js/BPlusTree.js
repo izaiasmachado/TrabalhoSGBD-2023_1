@@ -193,29 +193,28 @@ class BPlusTree extends Observable {
   }
 
   deleteEntry(value, pointer, node) {
+    console.log('===== DELETE ENTRY =====')
+    console.log('>> value', value)
+    console.log('>> pointer', pointer)
+    console.log('>> node', node.keys.slice(), node.pointers.slice())
     /**
      * Deleta a chave do nó
      */
-
     node.delete(value, pointer)
 
     if (this.root === node && node.pointers.length == 1) {
       console.log('===== DELETE ROOT =====')
-      console.log('>> node', node.keys.slice())
-
       /**
        * Caso seja raiz e o nó só tiver um nó filho,
        * então o nó filho vira a raiz e N é nó é removido
        */
-      // this.root = node.pointers[0]
-      this.root = node.nonNullPointers()[0]
-
       this.notifyAll({
         type: 'deleteRoot',
         data: {
           node,
         },
       })
+      this.root = this.root.nonNullPointers()[0]
       return
     }
 
@@ -226,12 +225,14 @@ class BPlusTree extends Observable {
        * então o nó é combinado com um de seus irmãos
        */
       const parent = this.parent(node)
-      console.log('>> parent', parent.keys.slice())
-      if (parent === null) return
 
       const index = parent.pointers.findIndex(p => p === node)
+      const parentPointers = parent.nonNullPointers()
+
       let sibling =
-        index >= 1 ? parent.pointers[index - 1] : parent.pointers[index + 1]
+        index >= 1 && parentPointers[index - 1]
+          ? parentPointers[index - 1]
+          : parentPointers[index + 1]
 
       const sumOfKeys = node.keys.length + sibling.keys.length
       const initialNodeLevel = this.getNodeLevel(node)
@@ -252,7 +253,6 @@ class BPlusTree extends Observable {
        * e o nó pai é removido
        */
       if (sumOfKeys <= node.fanout - 1) {
-        console.log('===== DELETE NODE BY COALESCING =====')
         if (isNodePredecessorSibling) {
           const temp = node
           node = sibling
@@ -260,9 +260,10 @@ class BPlusTree extends Observable {
         }
 
         if (node instanceof InternalNode) {
+          sibling.insertKey(k)
+
+          const nodeKeys = node.keys
           const nodePointers = node.nonNullPointers()
-          const nodeKeys = node.keys.concat(k)
-          nodeKeys.sort()
 
           nodeKeys.forEach((key, i) => {
             node.delete(key)
@@ -270,7 +271,7 @@ class BPlusTree extends Observable {
           })
         } else {
           const nodeKeys = node.keys.slice()
-          const nodePointers = node.nonNullPointers()
+          const nodePointers = node.pointers.slice()
 
           nodeKeys.forEach((key, index) => {
             node.delete(key)
@@ -278,6 +279,7 @@ class BPlusTree extends Observable {
           })
         }
 
+        this.deleteEntry(k, node, parent)
         this.notifyAll({
           type: 'deleteNode',
           data: {
@@ -285,8 +287,6 @@ class BPlusTree extends Observable {
             level: initialNodeLevel - 1,
           },
         })
-
-        this.deleteEntry(k, node, parent)
       } else {
         console.log('===== DELETE NODE BY REDISTRIBUTING =====')
 

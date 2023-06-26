@@ -6,10 +6,43 @@ window.addEventListener('load', () => {
   const treeVisualizer = new BPlusTreeVisualizer(tree2)
   const controllsListener = new ControllsListener(tree2)
 
-  console.log('tree2', tree2)
-  console.log(JSON.stringify(tree2, null, 2))
+  // print tree every 3 seconds
+  setInterval(() => {
+    console.log('tree', tree2)
+  }, 3000)
+
+  // console.log('tree2', tree2)
+  // console.log(JSON.stringify(tree2, null, 2))
+
   // tree2.insert('12')
 
+  // tree2.insert('1')
+  // tree2.insert('3')
+  // tree2.insert('5')
+  // tree2.insert('7')
+  // tree2.insert('9')
+  // tree2.insert('2')
+  // tree2.insert('4')
+  // tree2.insert('6')
+  // tree2.insert('8')
+  // tree2.insert('10')
+  // tree2.insert('11')
+  // tree2.insert('12')
+
+  tree2.insert('1')
+  tree2.insert('4')
+  tree2.insert('7')
+  tree2.insert('10')
+  tree2.insert('17')
+  tree2.insert('21')
+  tree2.insert('31')
+  tree2.insert('25')
+  tree2.insert('19')
+  tree2.insert('20')
+  tree2.insert('28')
+  tree2.insert('42')
+
+  // tree2.insert('Adams')
   // tree2.insert('Brandt')
   // tree2.insert('Califieri')
   // tree2.insert('Crick')
@@ -18,7 +51,6 @@ window.addEventListener('load', () => {
   // tree2.insert('Gold')
   // tree2.insert('Katz')
   // tree2.insert('Kim')
-
   // tree2.insert('Mozart')
   // tree2.insert('Singh')
   // tree2.insert('Srinivasan')

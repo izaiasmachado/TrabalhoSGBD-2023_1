@@ -22,6 +22,7 @@ class LevelVisualizer {
 
   updateLevelNodes() {
     this.levelNodes.forEach(node => {
+      if (!node || !node.element) return
       this.levelNodesElement.appendChild(node.element)
     })
 
@@ -72,14 +73,32 @@ class BPlusTreeVisualizer {
   createNode(data) {
     const { node, leftNode, level } = data
 
-    if (level === this.levels.length) {
+    // Caso o nó seja o primeiro da árvore
+    if (this.levels.length === level) {
       this.levels.push([node])
+      return
     }
 
     const levelIndex = this.levels.findIndex(l => l.includes(leftNode))
     const nodeIndex = this.levels[levelIndex].findIndex(n => n === leftNode)
 
     this.levels[levelIndex].splice(nodeIndex + 1, 0, node)
+  }
+
+  /**
+   * Reduz um nível da árvore ao remover o nó
+   * que está na raíz.
+   */
+  deleteRoot(data) {
+    const { node } = data
+    this.levels.shift()
+    delete this.nodeVisualizers[node.id]
+  }
+
+  deleteNode(data) {
+    const { node, level } = data
+    this.levels[level] = this.levels[level].filter(n => n !== node)
+    delete this.nodeVisualizers[node.id]
   }
 
   createVisualizer(data) {
@@ -126,6 +145,11 @@ class BPlusTreeVisualizer {
       case 'createNode':
         this.createNode(data)
         break
+      case 'deleteRoot':
+        this.deleteRoot(data)
+        break
+      case 'deleteNode':
+        this.deleteNode(data)
       default:
         break
     }

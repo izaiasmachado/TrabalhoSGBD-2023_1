@@ -148,23 +148,15 @@ class InternalNode extends BPlusTreeNode {
      */
 
     const i = this.keys.findIndex(k => isLower(value, k))
-
+    const insertKeyIndex = i !== -1 ? i : this.keys.length
     // Caso a chave seja menor que uma das chaves do nó
     // então a chave é inserida na posição i
     // e o ponteiro da posição i é deslocado para a direita
-
-    if (i !== -1) {
-      this.keys.splice(i, 0, value)
-      this.pointers.splice(i + 1, 0, pointer)
-      super.insert(value, pointer, i)
-      return
-    }
-
     // Caso a chave seja maior que todas as chaves do nó
     // então a chave é inserida na última posição
-    this.keys.push(value)
-    this.pointers.push(pointer)
-    super.insert(value, pointer, i)
+    this.keys.splice(insertKeyIndex, 0, value)
+    this.pointers.splice(insertKeyIndex + 1, 0, pointer)
+    super.insert(value, pointer, insertKeyIndex)
   }
 
   delete(value) {
@@ -183,6 +175,7 @@ class InternalNode extends BPlusTreeNode {
   }
 
   split(rightNode) {
+    console.log('===== SPLIT INTERNAL =====')
     const middleIndex = Math.ceil(this.fanout / 2)
     const pointersMiddleIndex = Math.ceil((this.fanout + 1) / 2)
     const keysToInsertInRightNode = this.keys.slice(middleIndex)
@@ -195,6 +188,9 @@ class InternalNode extends BPlusTreeNode {
     })
 
     const k2 = rightNode.mostLeftKey()
+    console.log('this', this)
+    console.log('rightNode', rightNode)
+    console.log('k2', k2)
     rightNode.deleteKey(k2)
     return k2
   }

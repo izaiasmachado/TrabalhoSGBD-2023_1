@@ -18,7 +18,6 @@ class EventQueue {
   }
 
   enqueue(event) {
-    console.log(event)
     this.queue.push(event)
   }
 

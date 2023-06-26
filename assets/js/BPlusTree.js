@@ -109,6 +109,11 @@ class BPlusTree extends Observable {
   }
 
   insertParent(node, newKey, newNode) {
+    console.log('==================')
+    console.log('>> node', node.keys.slice())
+    console.log('>> newKey', newKey)
+    console.log('>> newNode', newNode.keys.slice())
+
     if (this.root == node) {
       const newRoot = this.createNodeFunction(this.fanout, false)
 
@@ -131,7 +136,10 @@ class BPlusTree extends Observable {
       return
     }
 
+    console.log('Before split', parent.keys.slice())
     parent.insert(newKey, newNode)
+
+    console.log('Before split 2', parent.keys.slice())
 
     // Caso o nó pai esteja cheio
     // então o nó pai é dividido em dois
@@ -147,11 +155,14 @@ class BPlusTree extends Observable {
       },
     })
 
-    parent.split(rightNode)
-    this.insertParent(parent, rightNode.mostLeftKey(), rightNode)
+    const k2 = parent.split(rightNode)
+    this.insertParent(parent, k2, rightNode)
   }
 
   insert(value, pointer) {
+    console.log('===== INSERT =====')
+    console.log('>> value', value)
+    console.log('>> pointer', pointer)
     let leafNode
     if (this.isEmpty()) {
       this.root = this.createNodeFunction(this.fanout, true)
@@ -172,9 +183,10 @@ class BPlusTree extends Observable {
       return
     }
 
+    console.log('Before split LEAF', leafNode.keys.slice())
     leafNode.insert(value, pointer)
+    console.log('After split LEAF 2', leafNode.keys.slice())
     const rightNode = this.createNodeFunction(this.fanout, true)
-
     this.notifyAll({
       type: 'createNode',
       data: {
@@ -185,13 +197,14 @@ class BPlusTree extends Observable {
     })
 
     leafNode.split(rightNode)
+
+    console.log('After split LEAF', leafNode.keys.slice())
     this.insertParent(leafNode, rightNode.mostLeftKey(), rightNode)
   }
 
   delete(value, pointer) {
     const leafNode = this.find(value)
     if (leafNode === null) return
-    console.log('leafNode', leafNode.clone())
     this.deleteEntry(value, pointer, leafNode)
   }
 

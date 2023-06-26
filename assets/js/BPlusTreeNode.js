@@ -116,6 +116,14 @@ class BPlusTreeNode extends BaseNode {
     const parentKeyIndex = parent.pointers.findIndex(p => p === this)
     parent.keys[parentKeyIndex] = this.mostLeftKey()
   }
+
+  deleteKey(value) {
+    const i = this.keys.findIndex(k => isLowerOrEqual(value, k))
+
+    if (value !== this.keys[i]) return
+    this.keys.splice(i, 1)
+    this.delete(value)
+  }
 }
 
 class InternalNode extends BPlusTreeNode {
@@ -166,9 +174,12 @@ class InternalNode extends BPlusTreeNode {
   }
 
   split(rightNode) {
-    const middleIndex = Math.ceil((this.fanout + 1) / 2)
+    const middleIndex = Math.ceil(this.fanout / 2)
+    const pointersMiddleIndex = Math.ceil((this.fanout + 1) / 2)
     const keysToInsertInRightNode = this.keys.slice(middleIndex)
-    const pointersToInsertInRightNode = this.pointers.slice(middleIndex + 1)
+    const pointersToInsertInRightNode = this.pointers.slice(pointersMiddleIndex)
+
+    console.log('ANTES', this.keys.slice())
 
     keysToInsertInRightNode.forEach((key, index) => {
       const pointer = pointersToInsertInRightNode[index]
@@ -176,12 +187,15 @@ class InternalNode extends BPlusTreeNode {
       rightNode.insert(key, pointer)
     })
 
-    // ultimo ponteiro do nó esquerdo é o primeiro ponteiro do nó direito
-    const lastPointer = this.lastNonNullPointer()
-    rightNode.pointers.unshift(lastPointer)
+    const k2 = rightNode.mostLeftKey()
+    console.log(' == DEPOIS DO SPLIT DE NO INTERNO == ')
+    console.log('rightNode', rightNode.keys.slice())
+    console.log('chave deletada', k2)
+    rightNode.deleteKey(k2)
 
-    // remova o último ponteiro do nó esquerdo
-    this.pointers.pop()
+    console.log('this', this.keys.slice())
+    console.log('rightNode', rightNode.keys.slice())
+    return k2
   }
 }
 
@@ -228,8 +242,8 @@ class LeafNode extends BPlusTreeNode {
     const keysRightNode = this.keys.slice(middleIndex)
     const pointersRightNode = this.pointers.slice(middleIndex)
 
-    keysRightNode.forEach(key => this.delete(key))
     keysRightNode.forEach((key, index) => {
+      this.delete(key)
       rightSibling.insert(key, pointersRightNode[index])
     })
   }

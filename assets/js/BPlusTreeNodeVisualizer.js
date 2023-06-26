@@ -30,6 +30,9 @@ class BPlusTreeNodeVisualizer {
       case 'deleteKey':
         this.deleteKey(data.key.value)
         break
+      case 'replaceKey':
+        this.replaceKey(data.oldKey.value, data.newKey.value)
+        break
       case 'highlightKey':
         this.highlightKey(data.key.value)
         break
@@ -60,7 +63,15 @@ class BPlusTreeNodeVisualizer {
 
   deleteKey(key) {
     const keyElement = this.element.querySelector(`[data-key="${key}"]`)
+    if (!keyElement) return
     this.element.removeChild(keyElement)
+  }
+
+  replaceKey(oldKey, newKey) {
+    const keyElement = this.element.querySelector(`[data-key="${oldKey}"]`)
+    if (!keyElement) return
+    keyElement.setAttribute('data-key', newKey)
+    keyElement.innerText = newKey
   }
 
   highlightKey(key) {

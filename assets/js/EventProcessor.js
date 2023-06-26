@@ -22,6 +22,6 @@ class EventProcessor {
         const event = this.eventQueue.dequeue()
         event.callback(event)
       }
-    }, 300)
+    }, 1)
   }
 }

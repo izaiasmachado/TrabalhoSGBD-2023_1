@@ -114,7 +114,7 @@ class BPlusTreeNode extends BaseNode {
 
     // atualize a chave do pai
     const parentKeyIndex = parent.pointers.findIndex(p => p === this)
-    parent.keys[parentKeyIndex] = node.mostLeftKey()
+    parent.keys[parentKeyIndex] = this.mostLeftKey()
   }
 }
 
@@ -166,13 +166,11 @@ class InternalNode extends BPlusTreeNode {
   }
 
   split(rightNode) {
-    console.log('=== split ===', this.clone())
     const middleIndex = Math.ceil((this.fanout + 1) / 2)
     const keysToInsertInRightNode = this.keys.slice(middleIndex)
     const pointersToInsertInRightNode = this.pointers.slice(middleIndex + 1)
 
     keysToInsertInRightNode.forEach((key, index) => {
-      console.log(index, key, pointersToInsertInRightNode[index])
       const pointer = pointersToInsertInRightNode[index]
       this.delete(key)
       rightNode.insert(key, pointer)

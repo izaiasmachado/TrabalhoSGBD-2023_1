@@ -196,24 +196,19 @@ class BPlusTree extends Observable {
   }
 
   deleteEntry(value, pointer, node) {
-    console.log('=== deleteEntry ===', value, node.clone())
-
     /**
      * Deleta a chave do nó
      */
-    node.delete(value, pointer)
 
-    console.log('=== deleteEntry ===', value, node.clone())
+    node.delete(value, pointer)
 
     if (node === this.root && node.pointers.length == 1) {
       /**
        * Caso seja raiz e o nó só tiver um nó filho,
        * então o nó filho vira a raiz e N é nó é removido
        */
-      console.log('É raiz e só tem um filho', node.clone())
       // this.root = node.pointers[0]
       this.root = node.nonNullPointers()[0]
-      console.log('Nova raiz', this.root.clone())
 
       this.notifyAll({
         type: 'deleteRoot',
@@ -222,23 +217,16 @@ class BPlusTree extends Observable {
         },
       })
     } else if (node.pointers.length < Math.ceil(this.fanout / 2)) {
-      console.log('Nó tem menos que o mínimo de chaves', node.clone())
       /**
        * Caso o nó não seja raiz e o nó tiver menos que o mínimo de chaves
        * então o nó é combinado com um de seus irmãos
        */
       const parent = this.parent(node)
-      if (parent === null) {
-        console.log('parent is null', node.clone())
-        return
-      }
-      console.log('parent', parent.clone())
+      if (parent === null) return
+
       const index = parent.pointers.findIndex(p => p === node)
-      console.log('index', index)
       let sibling = parent.pointers[index - 1] || parent.pointers[index + 1]
-      console.log('sibling', sibling.clone())
       const sumOfKeys = node.keys.length + sibling.keys.length
-      console.log('sumOfKeys', sumOfKeys)
       const initialNodeLevel = this.getNodeLevel(node)
       const isNodePredecessorSibling = isLowerOrEqual(
         node.mostRightKey(),
@@ -250,7 +238,6 @@ class BPlusTree extends Observable {
        */
 
       const k = parent.keys[index - 1] || parent.keys[index]
-      console.log('k', k)
 
       /**
        * Se a soma das chaves do nó e do irmão for menor
@@ -258,43 +245,38 @@ class BPlusTree extends Observable {
        * e o nó pai é removido
        */
       if (sumOfKeys <= node.fanout - 1) {
-        // isNodePredecessorSibling é true se o nó for o irmão mais a esquerda
         if (isNodePredecessorSibling) {
-          console.log('swap node e sibling')
-          // swap node e sibling
           const temp = node
           node = sibling
           sibling = temp
         }
 
         if (node instanceof InternalNode) {
-          console.log('node instanceof InternalNode')
-          // append K' e os ponteiros do nó no irmão
-          sibling.insert(k, node.pointers[0])
-          sibling.pointers = sibling.pointers.concat(node.nonNullPointers())
-        } else {
-          console.log('node instanceof LeafNode')
-          const nodeKeys = node.keys
-          const nodePointers = node.pointers
+          const nodePointers = node.nonNullPointers()
+          const nodeKeys = node.keys.concat(k)
+          nodeKeys.sort()
 
-          nodePointers.forEach((pointer, index) => {
-            if (pointer === null) return
-            if (nodeKeys[index] === undefined) return
-            node.delete(nodeKeys[index], pointer)
-            sibling.insert(nodeKeys[index], pointer)
+          nodeKeys.forEach((key, i) => {
+            node.delete(key)
+            sibling.insert(key, nodePointers[i])
           })
+        } else {
+          const nodeKeys = node.keys.slice()
+          const nodePointers = node.nonNullPointers()
 
-          sibling.pointers.push(node.pointers[node.pointers.length - 1])
-
-          this.deleteEntry(k, node, parent)
-          this.notifyAll({
-            type: 'deleteNode',
-            data: {
-              node,
-              level: initialNodeLevel - 1,
-            },
+          nodeKeys.forEach((key, index) => {
+            node.delete(key)
+            sibling.insert(key, nodePointers[index])
           })
         }
+
+        this.notifyAll({
+          type: 'deleteNode',
+          data: {
+            node,
+            level: initialNodeLevel - 1,
+          },
+        })
 
         this.deleteEntry(k, node, parent)
       } else {

@@ -13,7 +13,6 @@ class ControllsListener {
   }
 
   handleButtonPress(data) {
-    // console.log('handleButtonPress', data)
     const { type } = data
 
     switch (type) {
@@ -30,7 +29,6 @@ class ControllsListener {
 
   handleManualAction(data) {
     const { action, value } = data
-    // console.log('handleManualAction', data)
     const pointerUUID = uuidv4()
 
     switch (action) {
@@ -38,10 +36,10 @@ class ControllsListener {
         this.tree.insert(value, pointerUUID)
         break
       case 'search':
-        this.tree.search(value, pointerUUID)
+        this.tree.find(value)
         break
       case 'delete':
-        this.tree.delete(value, pointerUUID)
+        this.tree.delete(value)
         break
       default:
         break

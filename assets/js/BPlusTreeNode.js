@@ -75,6 +75,23 @@ class BPlusTreeNode extends BaseNode {
     })
   }
 
+  insertKey(value) {
+    const i = this.keys.findIndex(k => isLowerOrEqual(value, k))
+    const insertKeyIndex = i !== -1 ? i : this.keys.length
+    this.keys.splice(insertKeyIndex, 0, value)
+
+    this.notifyAll({
+      type: 'insertKey',
+      data: {
+        node: this,
+        key: {
+          value,
+          index: insertKeyIndex,
+        },
+      },
+    })
+  }
+
   delete(value) {
     this.notifyAll({
       type: 'deleteKey',
@@ -98,23 +115,82 @@ class BPlusTreeNode extends BaseNode {
     return clone
   }
 
+  replaceKey(oldKey, newKey) {
+    console.log('===== REPLACE KEY =====')
+    console.log('oldKey', oldKey)
+    console.log('newKey', newKey)
+    console.log('this', this.keys.slice())
+    const i = this.keys.findIndex(k => isLowerOrEqual(oldKey, k))
+    if (i === -1) return
+    this.keys[i] = newKey
+    console.log('this', this.keys.slice())
+
+    this.notifyAll({
+      type: 'replaceKey',
+      data: {
+        node: this,
+        oldKey: {
+          value: oldKey,
+        },
+        newKey: {
+          value: newKey,
+        },
+      },
+    })
+  }
+
   /**
    * Sabendo que o nó tem menos que o mínimo de chaves,
    * então o nó é combinado com um de seus irmãos
    */
   redistribute(sibling, parent, k) {
-    const predecessorKey = sibling.mostRightKey()
-    const predecessorPointer = sibling.mostRightPointer()
+    console.log('===== REDISTRIBUTE =====')
+    console.log('this', this.keys.slice())
+    console.log('sibling', sibling.keys.slice())
+    console.log('parent', parent.keys.slice())
 
-    // remova a útima chave do irmão predecessor
-    sibling.delete(predecessorKey, predecessorPointer)
+    const isSiblingPredecessor = isLowerOrEqual(
+      sibling.mostRightKey(),
+      this.mostLeftKey(),
+    )
 
-    // insira a chave e o ponteiro do predecessor no nó
-    this.insert(k, predecessorPointer)
+    console.log('isSiblingPredecessor', isSiblingPredecessor)
 
-    // atualize a chave do pai
-    const parentKeyIndex = parent.pointers.findIndex(p => p === this)
-    parent.keys[parentKeyIndex] = this.mostLeftKey()
+    if (isSiblingPredecessor) {
+      const predecessorKey = sibling.mostRightKey()
+      const predecessorPointer = sibling.mostRightPointer()
+
+      console.log('predecessorKey', predecessorKey)
+      console.log('predecessorPointer', predecessorPointer)
+
+      // remova a útima chave do irmão predecessor
+      sibling.delete(predecessorKey, predecessorPointer)
+
+      // insira a chave e o ponteiro do predecessor no nó
+      this.insert(predecessorKey, predecessorPointer)
+
+      console.log('this', this.keys.slice())
+
+      // atualize a chave do pai
+      parent.replaceKey(k, predecessorKey)
+    } else {
+      const predecessorKey = sibling.mostLeftKey()
+      const predecessorPointer = sibling.mostLeftPointer()
+
+      console.log('predecessorKey', predecessorKey)
+      console.log('predecessorPointer', predecessorPointer)
+
+      // remova a útima chave do irmão predecessor
+      sibling.delete(predecessorKey, predecessorPointer)
+
+      // insira a chave e o ponteiro do predecessor no nó
+      this.insert(predecessorKey, predecessorPointer)
+
+      console.log('this', this.keys.slice())
+
+      // atualize a chave do pai
+      parent.replaceKey(k, predecessorKey)
+    }
   }
 
   deleteKey(value) {
@@ -138,6 +214,11 @@ class BPlusTreeNode extends BaseNode {
 class InternalNode extends BPlusTreeNode {
   constructor(fanout) {
     super(fanout)
+  }
+
+  hasTooFewKeys() {
+    const minimumKeys = Math.ceil(this.fanout / 2)
+    return this.keys.length < minimumKeys
   }
 
   insert(value, pointer) {
@@ -175,8 +256,7 @@ class InternalNode extends BPlusTreeNode {
   }
 
   split(rightNode) {
-    console.log('===== SPLIT INTERNAL =====')
-    const middleIndex = Math.ceil(this.fanout / 2)
+    const middleIndex = Math.ceil((this.fanout + 1) / 2) - 1
     const pointersMiddleIndex = Math.ceil((this.fanout + 1) / 2)
     const keysToInsertInRightNode = this.keys.slice(middleIndex)
     const pointersToInsertInRightNode = this.pointers.slice(pointersMiddleIndex)
@@ -187,12 +267,6 @@ class InternalNode extends BPlusTreeNode {
       rightNode.insert(key, pointer)
     })
 
-    if (keysToInsertInRightNode.length < pointersToInsertInRightNode.length) {
-      const lastPointer = this.pointers[this.pointers.length - 1]
-      this.pointers = this.pointers.filter(p => p !== lastPointer)
-      rightNode.pointers.push(lastPointer)
-    }
-
     const k2 = rightNode.mostLeftKey()
     rightNode.deleteKey(k2)
     return k2
@@ -202,6 +276,11 @@ class InternalNode extends BPlusTreeNode {
 class LeafNode extends BPlusTreeNode {
   constructor(fanout) {
     super(fanout)
+  }
+
+  hasTooFewKeys() {
+    const minimumKeys = Math.ceil((this.fanout - 1) / 2)
+    return this.keys.length < minimumKeys
   }
 
   insert(value, pointer) {
@@ -219,6 +298,10 @@ class LeafNode extends BPlusTreeNode {
   }
 
   delete(value) {
+    if (value == '7') {
+      console.log('===== DELETE =====')
+      console.log('this', this.keys.slice())
+    }
     const i = this.keys.findIndex(k => isLowerOrEqual(value, k))
 
     // Caso a chave seja igual a uma das chaves do nó

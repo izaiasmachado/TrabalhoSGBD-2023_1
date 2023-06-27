@@ -80,40 +80,37 @@ class BPlusTree extends Observable {
 
   parent(node) {
     const findParent = (currentNode, targetNode) => {
-      if (currentNode === null || currentNode === undefined) {
+      if (
+        currentNode === null ||
+        currentNode === undefined ||
+        targetNode === null ||
+        targetNode === undefined
+      ) {
         return null // The node was not found in the tree
       }
 
-      if (
-        currentNode.pointers &&
-        currentNode.pointers.some(
-          pointer => pointer && pointer.id === targetNode.id,
-        )
-      ) {
-        return currentNode // Found the parent of the desired node
-      }
+      if (!currentNode.pointers || currentNode instanceof LeafNode) return null
 
-      if (currentNode.pointers) {
-        for (const pointer of currentNode.pointers) {
-          const parent = findParent(pointer, targetNode) // Recursive call for each child
-          if (parent !== null) {
-            return parent // The parent was found in one of the children
-          }
+      const isNodeInPointers = currentNode.pointers.some(pointer => {
+        return pointer.id === targetNode.id
+      })
+
+      if (isNodeInPointers) return currentNode
+
+      for (const pointer of currentNode.pointers) {
+        const parent = findParent(pointer, targetNode)
+        if (parent !== null) {
+          return parent
         }
       }
 
-      return null // The parent was not found
+      return null
     }
 
     return findParent(this.root, node)
   }
 
   insertParent(node, newKey, newNode) {
-    console.log('==================')
-    console.log('>> node', node.keys.slice())
-    console.log('>> newKey', newKey)
-    console.log('>> newNode', newNode.keys.slice())
-
     if (this.root == node) {
       const newRoot = this.createNodeFunction(this.fanout, false)
 
@@ -136,11 +133,7 @@ class BPlusTree extends Observable {
       return
     }
 
-    console.log('Before split', parent.keys.slice())
     parent.insert(newKey, newNode)
-
-    console.log('Before split 2', parent.keys.slice())
-
     // Caso o nó pai esteja cheio
     // então o nó pai é dividido em dois
     // e o nó pai do nó pai é inserido no nó pai do nó
@@ -160,9 +153,6 @@ class BPlusTree extends Observable {
   }
 
   insert(value, pointer) {
-    console.log('===== INSERT =====')
-    console.log('>> value', value)
-    console.log('>> pointer', pointer)
     let leafNode
     if (this.isEmpty()) {
       this.root = this.createNodeFunction(this.fanout, true)
@@ -183,9 +173,7 @@ class BPlusTree extends Observable {
       return
     }
 
-    console.log('Before split LEAF', leafNode.keys.slice())
     leafNode.insert(value, pointer)
-    console.log('After split LEAF 2', leafNode.keys.slice())
     const rightNode = this.createNodeFunction(this.fanout, true)
     this.notifyAll({
       type: 'createNode',
@@ -197,8 +185,6 @@ class BPlusTree extends Observable {
     })
 
     leafNode.split(rightNode)
-
-    console.log('After split LEAF', leafNode.keys.slice())
     this.insertParent(leafNode, rightNode.mostLeftKey(), rightNode)
   }
 
@@ -209,36 +195,51 @@ class BPlusTree extends Observable {
   }
 
   deleteEntry(value, pointer, node) {
+    console.log('===== DELETE ENTRY =====')
+    console.log('>> value', value)
+    console.log('>> pointer', pointer)
+    console.log('>> node', node.keys.slice(), node.pointers.slice())
     /**
      * Deleta a chave do nó
      */
-
     node.delete(value, pointer)
 
-    if (node === this.root && node.pointers.length == 1) {
+    console.log('>> pointer', pointer)
+    console.log('>> node', node.keys.slice(), node.pointers.slice())
+
+    if (this.root === node && node.pointers.length == 1) {
+      console.log('===== DELETE ROOT =====')
       /**
        * Caso seja raiz e o nó só tiver um nó filho,
        * então o nó filho vira a raiz e N é nó é removido
        */
-      // this.root = node.pointers[0]
-      this.root = node.nonNullPointers()[0]
-
       this.notifyAll({
         type: 'deleteRoot',
         data: {
           node,
         },
       })
-    } else if (node.pointers.length < Math.ceil(this.fanout / 2)) {
+      this.root = this.root.pointers[0]
+      return
+    }
+
+    if (node.hasTooFewKeys()) {
+      console.log('===== DELETE NODE =====')
       /**
        * Caso o nó não seja raiz e o nó tiver menos que o mínimo de chaves
        * então o nó é combinado com um de seus irmãos
        */
       const parent = this.parent(node)
-      if (parent === null) return
+      if (!parent) return
 
       const index = parent.pointers.findIndex(p => p === node)
-      let sibling = parent.pointers[index - 1] || parent.pointers[index + 1]
+      const parentPointers = parent.nonNullPointers()
+
+      let sibling =
+        index >= 1 && parentPointers[index - 1]
+          ? parentPointers[index - 1]
+          : parentPointers[index + 1]
+
       const sumOfKeys = node.keys.length + sibling.keys.length
       const initialNodeLevel = this.getNodeLevel(node)
       const isNodePredecessorSibling = isLowerOrEqual(
@@ -257,25 +258,57 @@ class BPlusTree extends Observable {
        * ou igual ao máximo de chaves em um nó, então os nós são combinados
        * e o nó pai é removido
        */
+      // console.log('>> sumOfKeys', sumOfKeys)
+      // console.log(sibling.keys.slice())
+      // console.log(node.keys.slice())
+
       if (sumOfKeys <= node.fanout - 1) {
+        console.log('===== DELETE NODE BY COMBINING =====')
+        // TODO: Node não está sendo esvaziado
         if (isNodePredecessorSibling) {
+          // console.log('SWAPED NODES')
           const temp = node
           node = sibling
           sibling = temp
         }
 
+        // console.log(
+        //   'Combining',
+        //   node.keys.slice(),
+        //   node.pointers.slice(),
+        //   sibling.keys.slice(),
+        //   sibling.pointers.slice(),
+        // )
+
         if (node instanceof InternalNode) {
-          const nodePointers = node.nonNullPointers()
-          const nodeKeys = node.keys.concat(k)
-          nodeKeys.sort()
+          const initialSiblingSize = sibling.keys.length
+          sibling.insertKey(k)
+
+          const nodeKeys = node.keys.slice()
+          const nodePointers = node.pointers.slice()
+
+          // console.log('>> nodeKeys', nodeKeys)
+          // console.log('>> nodePointers', nodePointers)
 
           nodeKeys.forEach((key, i) => {
             node.delete(key)
-            sibling.insert(key, nodePointers[i])
+            sibling.insert(key, nodePointers[i + 1])
           })
+
+          const lastNodePointer = node.pointers.pop()
+          // console.log('>> initialSiblingSize', initialSiblingSize)
+          // console.log('>> lastNodePointer', lastNodePointer)
+
+          // console.log('>> nodeKeys', node.keys.slice())
+          // console.log('>> nodePointers', node.pointers.slice())
+
+          sibling.pointers.splice(initialSiblingSize + 1, 0, lastNodePointer)
+
+          // console.log('>> nodeKeys', node.keys.slice())
+          // console.log('>> nodePointers', node.pointers.slice())
         } else {
           const nodeKeys = node.keys.slice()
-          const nodePointers = node.nonNullPointers()
+          const nodePointers = node.pointers.slice()
 
           nodeKeys.forEach((key, index) => {
             node.delete(key)
@@ -283,6 +316,15 @@ class BPlusTree extends Observable {
           })
         }
 
+        console.log(
+          'Combined',
+          node.keys.slice(),
+          node.pointers.slice(),
+          sibling.keys.slice(),
+          sibling.pointers.slice(),
+        )
+
+        this.deleteEntry(k, node, parent)
         this.notifyAll({
           type: 'deleteNode',
           data: {
@@ -290,20 +332,13 @@ class BPlusTree extends Observable {
             level: initialNodeLevel - 1,
           },
         })
-
-        this.deleteEntry(k, node, parent)
       } else {
-        const isSiblingPredecessor = isLower(
-          sibling.mostRightKey(),
-          node.mostLeftKey(),
-        )
+        console.log('===== DELETE NODE BY REDISTRIBUTING =====')
 
-        if (isSiblingPredecessor) {
-          node.redistribute(sibling, parent, k)
-        } else {
-          sibling.redistribute(node, parent, k)
-        }
+        node.redistribute(sibling, parent, k)
       }
+
+      return
     }
   }
 }

@@ -1,18 +1,22 @@
 window.addEventListener('load', () => {
   const eventProcessor = EventProcessor.getInstance()
   const eventQueue = EventQueue.getInstance()
-
   const tree2 = new BPlusTree(4)
+
   const treeVisualizer = new BPlusTreeVisualizer(tree2)
   const controllsListener = new ControllsListener(tree2)
 
   // print tree every 3 seconds
-  setInterval(() => {
-    console.log('tree', tree2)
-  }, 3000)
 
   // console.log('tree2', tree2)
   // console.log(JSON.stringify(tree2, null, 2))
+
+  // str = '1, 2, 5, 6, 8, 10, 18, 27, 32, 39, 41, 45, 52, 58, 73, 80, 91, 99'
+  // arr = str.split(', ')
+
+  // arr.forEach(key => {
+  //   tree2.insert(key, key)
+  // })
 
   // tree2.insert('12')
 
@@ -35,13 +39,32 @@ window.addEventListener('load', () => {
   // tree2.insert('7')
   // tree2.insert('10')
   // tree2.insert('17')
-  // tree2.insert('21')
-  // tree2.insert('31')
+  // tree2.insert('21', 'P21')
+  // tree2.insert('31', 'P31')
   // tree2.insert('25')
   // tree2.insert('19')
   // tree2.insert('20')
   // tree2.insert('28')
   // tree2.insert('42')
+
+  // tree2.insert('1')
+  // tree2.insert('2')
+  // tree2.insert('5')
+  // tree2.insert('6')
+  // tree2.insert('8')
+  // tree2.insert('10')
+  // tree2.insert('18')
+  // tree2.insert('27')
+  // tree2.insert('32')
+  // tree2.insert('39')
+  // tree2.insert('41')
+  // tree2.insert('45')
+  // tree2.insert('52')
+  // tree2.insert('58')
+  // tree2.insert('73')
+  // tree2.insert('80')
+  // tree2.insert('91')
+  // tree2.insert('99  ')
 
   // tree2.insert('Adams')
   // tree2.insert('Brandt')
@@ -87,4 +110,8 @@ window.addEventListener('load', () => {
   // node.insert('Chave', {})
   // node.insert('Chave2', {})
   // node.insert('Chave3', {})
+
+  setInterval(() => {
+    console.log('tree', tree2)
+  }, 3000)
 })

@@ -202,6 +202,9 @@ class BPlusTree extends Observable {
      */
     node.delete(value, pointer)
 
+    console.log('>> pointer', pointer)
+    console.log('>> node', node.keys.slice(), node.pointers.slice())
+
     if (this.root === node && node.pointers.length == 1) {
       console.log('===== DELETE ROOT =====')
       /**
@@ -218,7 +221,7 @@ class BPlusTree extends Observable {
       return
     }
 
-    if (node.pointers.length < Math.ceil(this.fanout / 2)) {
+    if (node.hasTooFewKeys()) {
       console.log('===== DELETE NODE =====')
       /**
        * Caso o nó não seja raiz e o nó tiver menos que o mínimo de chaves
@@ -252,23 +255,54 @@ class BPlusTree extends Observable {
        * ou igual ao máximo de chaves em um nó, então os nós são combinados
        * e o nó pai é removido
        */
+      console.log('>> sumOfKeys', sumOfKeys)
+      console.log(sibling.keys.slice())
+      console.log(node.keys.slice())
+
       if (sumOfKeys <= node.fanout - 1) {
+        console.log('===== DELETE NODE BY COMBINING =====')
+        // TODO: Node não está sendo esvaziado
         if (isNodePredecessorSibling) {
+          console.log('SWAPED NODES')
           const temp = node
           node = sibling
           sibling = temp
         }
 
+        console.log(
+          'Combining',
+          node.keys.slice(),
+          node.pointers.slice(),
+          sibling.keys.slice(),
+          sibling.pointers.slice(),
+        )
+
         if (node instanceof InternalNode) {
+          const initialSiblingSize = sibling.keys.length
           sibling.insertKey(k)
 
-          const nodeKeys = node.keys
-          const nodePointers = node.nonNullPointers()
+          const nodeKeys = node.keys.slice()
+          const nodePointers = node.pointers.slice()
+
+          console.log('>> nodeKeys', nodeKeys)
+          console.log('>> nodePointers', nodePointers)
 
           nodeKeys.forEach((key, i) => {
             node.delete(key)
-            sibling.insert(key, nodePointers[i])
+            sibling.insert(key, nodePointers[i + 1])
           })
+
+          const lastNodePointer = node.pointers.pop()
+          console.log('>> initialSiblingSize', initialSiblingSize)
+          console.log('>> lastNodePointer', lastNodePointer)
+
+          console.log('>> nodeKeys', node.keys.slice())
+          console.log('>> nodePointers', node.pointers.slice())
+
+          sibling.pointers.splice(initialSiblingSize + 1, 0, lastNodePointer)
+
+          console.log('>> nodeKeys', node.keys.slice())
+          console.log('>> nodePointers', node.pointers.slice())
         } else {
           const nodeKeys = node.keys.slice()
           const nodePointers = node.pointers.slice()
@@ -278,6 +312,14 @@ class BPlusTree extends Observable {
             sibling.insert(key, nodePointers[index])
           })
         }
+
+        console.log(
+          'Combined',
+          node.keys.slice(),
+          node.pointers.slice(),
+          sibling.keys.slice(),
+          sibling.pointers.slice(),
+        )
 
         this.deleteEntry(k, node, parent)
         this.notifyAll({

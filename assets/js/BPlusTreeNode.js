@@ -52,9 +52,7 @@ class BPlusTreeNode extends BaseNode {
   }
 
   nonNullPointers() {
-    return this.pointers.filter(
-      p => p !== null && p.keys.length > 0 && p.pointers.length > 0,
-    )
+    return this.pointers.filter(p => p !== null)
   }
 
   lastNonNullPointer() {
@@ -218,6 +216,11 @@ class InternalNode extends BPlusTreeNode {
     super(fanout)
   }
 
+  hasTooFewKeys() {
+    const minimumKeys = Math.ceil(this.fanout / 2)
+    return this.keys.length < minimumKeys
+  }
+
   insert(value, pointer) {
     /**
      * Dado o valor e o ponteiro, percorra as chaves do nó
@@ -275,6 +278,11 @@ class LeafNode extends BPlusTreeNode {
     super(fanout)
   }
 
+  hasTooFewKeys() {
+    const minimumKeys = Math.ceil((this.fanout - 1) / 2)
+    return this.keys.length < minimumKeys
+  }
+
   insert(value, pointer) {
     const i = this.keys.findIndex(k => isLowerOrEqual(value, k))
 
@@ -290,6 +298,10 @@ class LeafNode extends BPlusTreeNode {
   }
 
   delete(value) {
+    if (value == '7') {
+      console.log('===== DELETE =====')
+      console.log('this', this.keys.slice())
+    }
     const i = this.keys.findIndex(k => isLowerOrEqual(value, k))
 
     // Caso a chave seja igual a uma das chaves do nó

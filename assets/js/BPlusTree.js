@@ -80,29 +80,31 @@ class BPlusTree extends Observable {
 
   parent(node) {
     const findParent = (currentNode, targetNode) => {
-      if (currentNode === null || currentNode === undefined) {
+      if (
+        currentNode === null ||
+        currentNode === undefined ||
+        targetNode === null ||
+        targetNode === undefined
+      ) {
         return null // The node was not found in the tree
       }
 
-      if (
-        currentNode.pointers &&
-        currentNode.pointers.some(
-          pointer => pointer && pointer.id === targetNode.id,
-        )
-      ) {
-        return currentNode // Found the parent of the desired node
-      }
+      if (!currentNode.pointers || currentNode instanceof LeafNode) return null
 
-      if (currentNode.pointers) {
-        for (const pointer of currentNode.pointers) {
-          const parent = findParent(pointer, targetNode) // Recursive call for each child
-          if (parent !== null) {
-            return parent // The parent was found in one of the children
-          }
+      const isNodeInPointers = currentNode.pointers.some(pointer => {
+        return pointer.id === targetNode.id
+      })
+
+      if (isNodeInPointers) return currentNode
+
+      for (const pointer of currentNode.pointers) {
+        const parent = findParent(pointer, targetNode)
+        if (parent !== null) {
+          return parent
         }
       }
 
-      return null // The parent was not found
+      return null
     }
 
     return findParent(this.root, node)
@@ -217,7 +219,7 @@ class BPlusTree extends Observable {
           node,
         },
       })
-      this.root = this.root.nonNullPointers()[0]
+      this.root = this.root.pointers[0]
       return
     }
 
@@ -228,6 +230,7 @@ class BPlusTree extends Observable {
        * então o nó é combinado com um de seus irmãos
        */
       const parent = this.parent(node)
+      if (!parent) return
 
       const index = parent.pointers.findIndex(p => p === node)
       const parentPointers = parent.nonNullPointers()
@@ -255,27 +258,27 @@ class BPlusTree extends Observable {
        * ou igual ao máximo de chaves em um nó, então os nós são combinados
        * e o nó pai é removido
        */
-      console.log('>> sumOfKeys', sumOfKeys)
-      console.log(sibling.keys.slice())
-      console.log(node.keys.slice())
+      // console.log('>> sumOfKeys', sumOfKeys)
+      // console.log(sibling.keys.slice())
+      // console.log(node.keys.slice())
 
       if (sumOfKeys <= node.fanout - 1) {
         console.log('===== DELETE NODE BY COMBINING =====')
         // TODO: Node não está sendo esvaziado
         if (isNodePredecessorSibling) {
-          console.log('SWAPED NODES')
+          // console.log('SWAPED NODES')
           const temp = node
           node = sibling
           sibling = temp
         }
 
-        console.log(
-          'Combining',
-          node.keys.slice(),
-          node.pointers.slice(),
-          sibling.keys.slice(),
-          sibling.pointers.slice(),
-        )
+        // console.log(
+        //   'Combining',
+        //   node.keys.slice(),
+        //   node.pointers.slice(),
+        //   sibling.keys.slice(),
+        //   sibling.pointers.slice(),
+        // )
 
         if (node instanceof InternalNode) {
           const initialSiblingSize = sibling.keys.length
@@ -284,8 +287,8 @@ class BPlusTree extends Observable {
           const nodeKeys = node.keys.slice()
           const nodePointers = node.pointers.slice()
 
-          console.log('>> nodeKeys', nodeKeys)
-          console.log('>> nodePointers', nodePointers)
+          // console.log('>> nodeKeys', nodeKeys)
+          // console.log('>> nodePointers', nodePointers)
 
           nodeKeys.forEach((key, i) => {
             node.delete(key)
@@ -293,16 +296,16 @@ class BPlusTree extends Observable {
           })
 
           const lastNodePointer = node.pointers.pop()
-          console.log('>> initialSiblingSize', initialSiblingSize)
-          console.log('>> lastNodePointer', lastNodePointer)
+          // console.log('>> initialSiblingSize', initialSiblingSize)
+          // console.log('>> lastNodePointer', lastNodePointer)
 
-          console.log('>> nodeKeys', node.keys.slice())
-          console.log('>> nodePointers', node.pointers.slice())
+          // console.log('>> nodeKeys', node.keys.slice())
+          // console.log('>> nodePointers', node.pointers.slice())
 
           sibling.pointers.splice(initialSiblingSize + 1, 0, lastNodePointer)
 
-          console.log('>> nodeKeys', node.keys.slice())
-          console.log('>> nodePointers', node.pointers.slice())
+          // console.log('>> nodeKeys', node.keys.slice())
+          // console.log('>> nodePointers', node.pointers.slice())
         } else {
           const nodeKeys = node.keys.slice()
           const nodePointers = node.pointers.slice()

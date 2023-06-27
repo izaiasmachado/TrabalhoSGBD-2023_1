@@ -264,6 +264,12 @@ class InternalNode extends BPlusTreeNode {
       rightNode.insert(key, pointer)
     })
 
+    if (keysToInsertInRightNode.length < pointersToInsertInRightNode.length) {
+      const lastPointer = this.pointers[this.pointers.length - 1]
+      this.pointers = this.pointers.filter(p => p !== lastPointer)
+      rightNode.pointers.push(lastPointer)
+    }
+
     const k2 = rightNode.mostLeftKey()
     rightNode.deleteKey(k2)
     return k2

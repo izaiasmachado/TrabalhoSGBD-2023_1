@@ -253,7 +253,7 @@ class InternalNode extends BPlusTreeNode {
   }
 
   split(rightNode) {
-    const middleIndex = Math.ceil(this.fanout / 2)
+    const middleIndex = Math.ceil((this.fanout + 1) / 2) - 1
     const pointersMiddleIndex = Math.ceil((this.fanout + 1) / 2)
     const keysToInsertInRightNode = this.keys.slice(middleIndex)
     const pointersToInsertInRightNode = this.pointers.slice(pointersMiddleIndex)
@@ -265,9 +265,6 @@ class InternalNode extends BPlusTreeNode {
     })
 
     const k2 = rightNode.mostLeftKey()
-    console.log('this', this)
-    console.log('rightNode', rightNode)
-    console.log('k2', k2)
     rightNode.deleteKey(k2)
     return k2
   }

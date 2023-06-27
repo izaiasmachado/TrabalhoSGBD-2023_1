@@ -36,9 +36,6 @@ class BPlusTreeNodeVisualizer {
       case 'highlightKey':
         this.highlightKey(data.key.value)
         break
-      case 'unhighlightKey':
-        this.unhighlightKey(data.key.value)
-        break
       default:
         break
     }
@@ -82,5 +79,14 @@ class BPlusTreeNodeVisualizer {
   unhighlightKey(key) {
     const keyElement = this.element.querySelector(`[data-key="${key}"]`)
     keyElement.classList.remove('highlight')
+  }
+
+  highlightNode() {
+    this.element.classList.add('highlight')
+    const duration = 600
+
+    setTimeout(() => {
+      this.element.classList.remove('highlight')
+    }, duration)
   }
 }

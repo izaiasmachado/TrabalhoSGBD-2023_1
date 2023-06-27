@@ -44,7 +44,6 @@ class BPlusTree extends Observable {
   isEmpty() {
     return this.root === null
   }
-
   /**
    * Dado um valor de chave, encontra o nó folha que a chave deveria estar
    */
@@ -53,6 +52,13 @@ class BPlusTree extends Observable {
 
     while (c instanceof InternalNode) {
       const i = c.keys.findIndex(k => isLower(value, k))
+
+      this.notifyAll({
+        type: 'highlightNode',
+        data: {
+          node: c,
+        },
+      })
 
       if (i === -1) {
         // Caso nenhuma chave seja menor que a chave
@@ -68,6 +74,13 @@ class BPlusTree extends Observable {
         c = c.pointers[i]
       }
     }
+
+    this.notifyAll({
+      type: 'highlightNode',
+      data: {
+        node: c,
+      },
+    })
 
     return c
   }

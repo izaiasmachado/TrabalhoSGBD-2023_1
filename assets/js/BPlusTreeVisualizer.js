@@ -107,6 +107,11 @@ class BPlusTreeVisualizer {
     this.nodeVisualizers[node.id] = nodeVisualizer
   }
 
+  highlightNode(data) {
+    const { node } = data
+    this.nodeVisualizers[node.id].highlightNode()
+  }
+
   init() {
     this.createElement()
     const renderFixedScope = this.render.bind(this)
@@ -147,6 +152,9 @@ class BPlusTreeVisualizer {
         break
       case 'deleteRoot':
         this.deleteRoot(data)
+        break
+      case 'highlightNode':
+        this.highlightNode(data)
         break
       case 'deleteNode':
         this.deleteNode(data)

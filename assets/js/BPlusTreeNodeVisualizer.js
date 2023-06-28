@@ -93,7 +93,7 @@ class BPlusTreeNodeVisualizer {
   /**
    * O ponto de conexão é o canto superior esquerdo do nó.
    */
-  getConnectionPoint() {
+  getPointerInPoint() {
     const rect = this.element.getBoundingClientRect()
     const x = rect.left
     const y = rect.top - rect.height / 2
@@ -116,7 +116,7 @@ class BPlusTreeNodeVisualizer {
     // De modo que caso seja o primeiro ponteiro, o da esquerda.
     // Savendo que ponter começa em 1
     const x = rect.left + pointerWidth * pointer
-    const y = rect.top + rect.height / 2
+    const y = rect.bottom - rect.height / 2
     return { x, y }
   }
 }

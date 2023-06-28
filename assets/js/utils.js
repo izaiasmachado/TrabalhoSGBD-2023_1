@@ -53,6 +53,20 @@ function isLowerOrEqual(a, b) {
   return false
 }
 
+function generateRandomUniqueNumbers(start, end, count) {
+  const randomNumbers = []
+  if (end - start + 1 < count) return null
+
+  while (randomNumbers.length < count) {
+    const randomNumber = Math.floor(Math.random() * (end - start + 1)) + start
+
+    if (randomNumbers.includes(randomNumber)) continue
+    randomNumbers.push(randomNumber)
+  }
+
+  return randomNumbers
+}
+
 class Observable {
   constructor() {
     this.observers = []

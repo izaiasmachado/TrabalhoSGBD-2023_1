@@ -1,21 +1,40 @@
 window.addEventListener('load', function () {
   const selectInputManual = document.querySelector('#select-input-manual')
-  const selectInputRandom = document.querySelector('#select-input-random')
+  const selectInsertRandom = document.querySelector('#select-insert-random')
+  const selectDeleteRandom = document.querySelector('#select-delete-random')
+
   const manualInputBar = document.querySelector('#manual-container')
-  const randomInputBar = document.querySelector('#random-container')
+  const randomInsertBar = document.querySelector('#random-insert-container')
+  const randomDeleteBar = document.querySelector('#random-delete-container')
 
   selectInputManual.addEventListener('click', function () {
     console.log('selectInputManual')
     selectInputManual.classList.add('selected')
-    selectInputRandom.classList.remove('selected')
+    selectInsertRandom.classList.remove('selected')
+    selectDeleteRandom.classList.remove('selected')
+
     manualInputBar.style.display = 'flex'
-    randomInputBar.style.display = 'none'
+    randomInsertBar.style.display = 'none'
+    randomDeleteBar.style.display = 'none'
   })
 
-  selectInputRandom.addEventListener('click', function () {
-    selectInputRandom.classList.add('selected')
+  selectInsertRandom.addEventListener('click', function () {
+    selectInsertRandom.classList.add('selected')
     selectInputManual.classList.remove('selected')
-    randomInputBar.style.display = 'flex'
+    selectDeleteRandom.classList.remove('selected')
+
+    randomInsertBar.style.display = 'flex'
     manualInputBar.style.display = 'none'
+    randomDeleteBar.style.display = 'none'
+  })
+
+  selectDeleteRandom.addEventListener('click', function () {
+    selectDeleteRandom.classList.add('selected')
+    selectInsertRandom.classList.remove('selected')
+    selectInputManual.classList.remove('selected')
+
+    randomDeleteBar.style.display = 'flex'
+    manualInputBar.style.display = 'none'
+    randomInsertBar.style.display = 'none'
   })
 })

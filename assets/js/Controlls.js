@@ -24,10 +24,20 @@ class Controlls extends Observable {
     this.manualSearchButton = document.getElementById('manual-search-button')
     this.manualDeleteButton = document.getElementById('manual-delete-button')
 
-    this.randomInputStart = document.getElementById('random-input-start')
-    this.randomInputEnd = document.getElementById('random-input-end')
-    this.randomInputCount = document.getElementById('random-input-count')
+    this.randomInsertionInputStart = document.getElementById(
+      'random-insert-input-start',
+    )
+    this.randomInsertionInputEnd = document.getElementById(
+      'random-insert-input-end',
+    )
+    this.randomInsertionInputCount = document.getElementById(
+      'random-insert-input-count',
+    )
     this.randomInsertButton = document.getElementById('random-insert-button')
+
+    this.randomDeletionInputCount = document.getElementById(
+      'random-deletion-input-count',
+    )
     this.randomDeleteButton = document.getElementById('random-delete-button')
 
     this.showFanout = document.getElementById('show-fanout')
@@ -41,6 +51,10 @@ class Controlls extends Observable {
     this.increaseFanoutButton = document.getElementById(
       'increase-fanout-button',
     )
+
+    setInterval(() => {
+      console.log('tree', this.tree)
+    }, 3000)
   }
 
   addButtonsEventListeners() {
@@ -54,14 +68,14 @@ class Controlls extends Observable {
     this.manualSearchButton.addEventListener('click', e => {
       e.preventDefault()
 
-      const value = this.manualInputKey.value
+      const value = parseNumberIfPossible(this.manualInputKey.value)
       this.handleManualAction({ action: 'search', value })
     })
 
     this.manualDeleteButton.addEventListener('click', e => {
       e.preventDefault()
 
-      const value = this.manualInputKey.value
+      const value = parseNumberIfPossible(this.manualInputKey.value)
       this.handleManualAction({ action: 'delete', value })
     })
 
@@ -95,23 +109,19 @@ class Controlls extends Observable {
     this.randomInsertButton.addEventListener('click', e => {
       e.preventDefault()
 
-      const start = Number(this.randomInputStart.value)
-      const end = Number(this.randomInputEnd.value)
-      const count = Number(this.randomInputCount.value)
+      const start = Number(this.randomInsertionInputStart.value)
+      const end = Number(this.randomInsertionInputEnd.value)
+      const count = Number(this.randomInsertionInputCount.value)
 
       console.log(start, end, count)
       this.handleRandomAction({ action: 'insert', start, end, count })
     })
 
-    this.randomDeleteButton.addEventListener('click', e => {
-      e.preventDefault()
-
-      const start = Number(this.randomInputStart.value)
-      const end = Number(this.randomInputEnd.value)
-      const count = Number(this.randomInputCount.value)
-
-      this.handleRandomAction({ action: 'delete', start, end, count })
-    })
+    // this.randomDeleteButton.addEventListener('click', e => {
+    //   e.preventDefault()
+    //   const count = Number(this.randomInputCount.value)
+    //   this.handleRandomAction({ action: 'delete', start, end, count })
+    // })
   }
 
   handleRandomAction(data) {
@@ -129,7 +139,7 @@ class Controlls extends Observable {
         break
       case 'delete':
         randomNumbers.forEach(value => {
-          this.tree.delete(value)
+          this.tree.delete(value, null)
         })
         break
       default:
@@ -149,7 +159,7 @@ class Controlls extends Observable {
         this.tree.find(value)
         break
       case 'delete':
-        this.tree.delete(value)
+        this.tree.delete(value, null)
         break
       default:
         break

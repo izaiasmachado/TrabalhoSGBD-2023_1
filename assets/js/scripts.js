@@ -107,8 +107,4 @@ window.addEventListener('load', () => {
   // node.insert('Chave', {})
   // node.insert('Chave2', {})
   // node.insert('Chave3', {})
-
-  // setInterval(() => {
-  //   console.log('tree', tree2)
-  // }, 3000)
 })

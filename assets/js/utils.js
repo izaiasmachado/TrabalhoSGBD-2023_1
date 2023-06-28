@@ -53,6 +53,11 @@ function isLowerOrEqual(a, b) {
   return false
 }
 
+function parseNumberIfPossible(value) {
+  const parsedValue = Number(value)
+  return isNaN(parsedValue) ? value : parsedValue
+}
+
 function generateRandomUniqueNumbers(start, end, count) {
   const randomNumbers = []
   if (end - start + 1 < count) return null

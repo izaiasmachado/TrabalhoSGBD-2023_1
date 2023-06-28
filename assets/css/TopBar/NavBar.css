@@ -16,6 +16,13 @@ nav {
   gap: 10px;
 }
 
+.treeInputOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: space-between;
+}
+
 /* https://cdn.dribbble.com/users/342196/screenshots/4495275/search_picker.png?resize=400x0 */
 .treeOptionsContainer {
   display: flex;

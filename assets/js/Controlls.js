@@ -3,7 +3,7 @@ class Controlls extends Observable {
     super()
     this.createTree()
     this.init()
-    // this.addButtonsEventListeners()
+    this.addButtonsEventListeners()
     this.fanout = 4
   }
 

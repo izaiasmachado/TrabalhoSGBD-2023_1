@@ -1,9 +1,16 @@
 * {
   font-family: Arial, Helvetica, sans-serif;
+  --primary-color: #f8f8fa;
+  --primary-text-color: #000;
+  --secondary-color: #fffffc;
+  --secodary-text-color: #fff;
+  --accent-color: #f0eff4;
+  --tertiary-color: #1e69fe;
+  --tertiary-text-color: #fff;
 }
 
 body {
-  background-color: #f8f8fa;
+  background-color: var(--primary-color);
 }
 
 #container {

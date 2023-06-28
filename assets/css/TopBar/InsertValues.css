@@ -1,0 +1,78 @@
+/* #manual-container {
+  display: flex;
+  flex-wrap: wrap;
+  user-select: none;
+}
+
+#random-container {
+  display: none;
+  flex-wrap: wrap;
+  user-select: none;
+}
+
+.input-button {
+  display: inline-block;
+  border: none;
+  text-align: center;
+  transition: all 0.5s;
+  cursor: pointer;
+  background-color: #d9d9d9;
+}
+
+.input-button:last-child {
+  border-radius: 0 10px 10px 0;
+}
+
+.input-button:hover {
+  background-color: #c1c1c1;
+}
+
+.input-bar {
+  max-width: 130px;
+  background-color: #f5f5f5;
+  color: #242424;
+  padding: 0.15rem 0.5rem;
+  min-height: 40px;
+  outline: none;
+  border: none;
+  line-height: 1.15;
+  box-shadow: 0px 10px 20px -18px;
+} */
+
+.treeInputOptionButtons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.input-bar {
+  font-size: 1rem;
+  outline: none;
+  border: 1px solid gray;
+  border-radius: 5px;
+  padding: 1rem 0.7rem;
+  color: gray;
+  transition: 0.1s ease-out;
+}
+
+.input-button {
+  min-width: 90px;
+  height: 100%;
+  border: none;
+  background: var(--tertiary-color);
+  color: var(--tertiary-text-color);
+  cursor: pointer;
+  padding: 0.5rem;
+  border: 1px solid gray;
+  border-radius: 5px;
+  transition: 0.1s ease-out;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.input-button:hover {
+  filter: brightness(0.92);
+  transform: translateY(-1px);
+}

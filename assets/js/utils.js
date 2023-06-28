@@ -53,11 +53,14 @@ function isLowerOrEqual(a, b) {
   return false
 }
 
-function generateRandomNumbers(start, end, count) {
+function generateRandomUniqueNumbers(start, end, count) {
   const randomNumbers = []
+  if (end - start + 1 < count) return null
 
-  for (let i = 0; i < count; i++) {
+  while (randomNumbers.length < count) {
     const randomNumber = Math.floor(Math.random() * (end - start + 1)) + start
+
+    if (randomNumbers.includes(randomNumber)) continue
     randomNumbers.push(randomNumber)
   }
 

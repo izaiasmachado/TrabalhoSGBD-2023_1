@@ -116,7 +116,9 @@ class Controlls extends Observable {
 
   handleRandomAction(data) {
     const { action, start, end, count } = data
-    const randomNumbers = generateRandomNumbers(start, end, count)
+    const randomNumbers = generateRandomUniqueNumbers(start, end, count)
+
+    if (!randomNumbers) return
 
     switch (action) {
       case 'insert':

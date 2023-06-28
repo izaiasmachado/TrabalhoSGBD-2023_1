@@ -76,3 +76,7 @@
   filter: brightness(0.92);
   transform: translateY(-1px);
 }
+
+#random-container {
+  display: none;
+}

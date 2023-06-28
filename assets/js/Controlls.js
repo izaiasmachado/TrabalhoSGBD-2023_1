@@ -5,6 +5,7 @@ class Controlls extends Observable {
     this.init()
     this.addButtonsEventListeners()
     this.fanout = 4
+    this.treeKeys = new Set()
   }
 
   createTree() {
@@ -117,30 +118,41 @@ class Controlls extends Observable {
       this.handleRandomAction({ action: 'insert', start, end, count })
     })
 
-    // this.randomDeleteButton.addEventListener('click', e => {
-    //   e.preventDefault()
-    //   const count = Number(this.randomInputCount.value)
-    //   this.handleRandomAction({ action: 'delete', start, end, count })
-    // })
+    this.randomDeleteButton.addEventListener('click', e => {
+      e.preventDefault()
+      const count = Number(this.randomDeletionInputCount.value)
+      this.handleRandomAction({ action: 'delete', count })
+    })
   }
 
   handleRandomAction(data) {
-    const { action, start, end, count } = data
-    const randomNumbers = generateRandomUniqueNumbers(start, end, count)
-
-    if (!randomNumbers) return
+    const { action, count } = data
 
     switch (action) {
       case 'insert':
+        const { start, end } = data
+        const randomNumbers = generateRandomUniqueNumbers(start, end, count)
+
+        if (!randomNumbers) return
+
         randomNumbers.forEach(value => {
           const pointerUUID = uuidv4()
+          this.treeKeys.add(value)
           this.tree.insert(value, pointerUUID)
         })
         break
       case 'delete':
-        randomNumbers.forEach(value => {
-          this.tree.delete(value, null)
-        })
+        // GENERATE count random numbers
+        // DELETE count random numbers
+
+        if (this.treeKeys.size < count) return
+
+        for (let i = 0; i < count; i++) {
+          const randomIndex = Math.floor(Math.random() * this.treeKeys.size)
+          const randomKey = Array.from(this.treeKeys)[randomIndex]
+          this.treeKeys.delete(randomKey)
+          this.tree.delete(randomKey, null)
+        }
         break
       default:
         break
@@ -153,12 +165,14 @@ class Controlls extends Observable {
 
     switch (action) {
       case 'insert':
+        this.treeKeys.add(value)
         this.tree.insert(value, pointerUUID)
         break
       case 'search':
         this.tree.find(value)
         break
       case 'delete':
+        this.treeKeys.delete(value)
         this.tree.delete(value, null)
         break
       default:

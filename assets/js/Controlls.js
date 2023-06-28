@@ -23,6 +23,13 @@ class Controlls extends Observable {
     this.manualInsertButton = document.getElementById('manual-insert-button')
     this.manualSearchButton = document.getElementById('manual-search-button')
     this.manualDeleteButton = document.getElementById('manual-delete-button')
+
+    this.randomInputStart = document.getElementById('random-input-start')
+    this.randomInputEnd = document.getElementById('random-input-end')
+    this.randomInputCount = document.getElementById('random-input-count')
+    this.randomInsertButton = document.getElementById('random-insert-button')
+    this.randomDeleteButton = document.getElementById('random-delete-button')
+
     this.showFanout = document.getElementById('show-fanout')
     this.speedSelector = document.getElementById('tree-speed-selector')
 
@@ -84,6 +91,48 @@ class Controlls extends Observable {
       console.log(timeInterval)
       EventProcessor.getInstance().changeTimeInterval(timeInterval)
     })
+
+    this.randomInsertButton.addEventListener('click', e => {
+      e.preventDefault()
+
+      const start = Number(this.randomInputStart.value)
+      const end = Number(this.randomInputEnd.value)
+      const count = Number(this.randomInputCount.value)
+
+      console.log(start, end, count)
+      this.handleRandomAction({ action: 'insert', start, end, count })
+    })
+
+    this.randomDeleteButton.addEventListener('click', e => {
+      e.preventDefault()
+
+      const start = Number(this.randomInputStart.value)
+      const end = Number(this.randomInputEnd.value)
+      const count = Number(this.randomInputCount.value)
+
+      this.handleRandomAction({ action: 'delete', start, end, count })
+    })
+  }
+
+  handleRandomAction(data) {
+    const { action, start, end, count } = data
+    const randomNumbers = generateRandomNumbers(start, end, count)
+
+    switch (action) {
+      case 'insert':
+        randomNumbers.forEach(value => {
+          const pointerUUID = uuidv4()
+          this.tree.insert(value, pointerUUID)
+        })
+        break
+      case 'delete':
+        randomNumbers.forEach(value => {
+          this.tree.delete(value)
+        })
+        break
+      default:
+        break
+    }
   }
 
   handleManualAction(data) {

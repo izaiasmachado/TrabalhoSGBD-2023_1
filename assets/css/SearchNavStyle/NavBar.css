@@ -1,12 +1,12 @@
 nav {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   gap: 30px;
   background-color: #ffffff;
   margin: 20px 10px;
   padding: 20px 15px;
   border-radius: 5px;
-  /* shadow */
   box-shadow: 0px 0px 8px 0px rgba(17, 17, 17, 0.34);
 }
 

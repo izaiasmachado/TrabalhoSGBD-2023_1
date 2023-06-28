@@ -74,6 +74,25 @@ class BPlusTree extends Observable {
             visited.add(childNode)
           }
         }
+      } else if (currentNode instanceof LeafNode) {
+        const parent = this.parent(currentNode)
+        if (!parent) continue
+        const index = parent.pointers.findIndex(p => p === currentNode)
+        const rightSibling = parent.pointers[index + 1]
+
+        if (rightSibling) {
+          connections.push({
+            parent: currentNode,
+            child: rightSibling,
+            isBrother: true,
+          })
+        }
+
+        // If the leaf node has not been visited, add it to the stack
+        if (!visited.has(currentNode)) {
+          stack.push(currentNode)
+          visited.add(currentNode)
+        }
       }
     }
 
@@ -248,7 +267,7 @@ class BPlusTree extends Observable {
     console.log('===== DELETE ENTRY =====')
     console.log('>> value', value)
     console.log('>> pointer', pointer)
-    console.log('>> node', node.keys.slice(), node.pointers.slice())
+    // console.log('>> node', node.keys.slice(), node.pointers.slice())
     /**
      * Deleta a chave do nó
      */

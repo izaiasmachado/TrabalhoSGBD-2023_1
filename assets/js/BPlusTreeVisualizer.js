@@ -109,6 +109,7 @@ class BPlusTreeVisualizer {
 
   highlightNode(data) {
     const { node } = data
+    if (!this.nodeVisualizers[node.id]) return
     this.nodeVisualizers[node.id].highlightNode()
   }
 
@@ -203,9 +204,11 @@ class BPlusTreeVisualizer {
     canvas.width = canvas.offsetWidth
     canvas.height = canvas.offsetHeight
 
-    connections.forEach(connection => {
-      const { parent, child, index } = connection
+    const ctx = canvas.getContext('2d')
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
 
+    connections.forEach(connection => {
+      const { parent, child } = connection
       if (!parent || !child) return
 
       const parentVisualizer = this.nodeVisualizers[parent.id]
@@ -213,14 +216,18 @@ class BPlusTreeVisualizer {
 
       if (!parentVisualizer || !childVisualizer) return
 
-      const parentCoordinates = parentVisualizer.getPointerOutPoint(index)
-      const childCoordinates = childVisualizer.getPointerInPoint()
+      const parentCoordinates = connection.isBrother
+        ? parentVisualizer.getLateralOutPoint()
+        : parentVisualizer.getPointerOutPoint(connection.index)
+      const childCoordinates = connection.isBrother
+        ? childVisualizer.getLateralInPoint()
+        : childVisualizer.getPointerInPoint()
 
       if (!parentCoordinates || !childCoordinates) return
-      if (parentCoordinates.x === 0 && parentCoordinates.y === 0) return
-      if (childCoordinates.x === 0 && childCoordinates.y === 0) return
+      if (parentCoordinates.x <= 0 || parentCoordinates.y <= 0) return
+      if (childCoordinates.x <= 0 || childCoordinates.y <= 0) return
 
-      const ctx = canvas.getContext('2d')
+      ctx.lineWidth = 2
 
       ctx.beginPath()
       ctx.moveTo(parentCoordinates.x, parentCoordinates.y)

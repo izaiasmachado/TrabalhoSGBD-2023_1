@@ -119,4 +119,24 @@ class BPlusTreeNodeVisualizer {
     const y = rect.bottom - rect.height / 2
     return { x, y }
   }
+
+  /**
+   * Meio e na esquerda
+   */
+  getLateralInPoint() {
+    const rect = this.element.getBoundingClientRect()
+    const x = rect.left - 10
+    const y = rect.top
+    return { x, y }
+  }
+
+  /**
+   * Meio e na direita
+   */
+  getLateralOutPoint() {
+    const rect = this.element.getBoundingClientRect()
+    const x = rect.right - 10
+    const y = rect.top
+    return { x, y }
+  }
 }

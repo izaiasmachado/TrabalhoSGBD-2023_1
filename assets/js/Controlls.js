@@ -1,20 +1,15 @@
 class Controlls extends Observable {
   constructor() {
     super()
-    this.createTree()
-    this.init()
-    this.addButtonsEventListeners()
     this.fanout = 4
     this.treeKeys = new Set()
-  }
-
-  createTree() {
-    this.tree = new BPlusTree(4)
-    this.treeVisualizer = new BPlusTreeVisualizer(this.tree)
+    this.createNewTree()
+    this.init()
+    this.addButtonsEventListeners()
   }
 
   createNewTree() {
-    this.treeVisualizer.clear()
+    if (this.treeVisualizer) this.treeVisualizer.clear()
     this.tree = new BPlusTree(this.fanout)
     this.treeVisualizer = new BPlusTreeVisualizer(this.tree)
   }

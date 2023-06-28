@@ -14,11 +14,13 @@ body {
 }
 
 #container {
-  margin-top: 40px;
+  position: relative;
+  width: 100%;
+  height: calc(100vh - (100vh / 10));
 }
 
-.tree {
-  position: relative;
+#tree {
+  /* position: relative; */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -117,8 +119,8 @@ body {
   }
 }
 
-canvas {
-  position: fixed;
+#canvas {
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;

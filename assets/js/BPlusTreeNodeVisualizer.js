@@ -89,4 +89,54 @@ class BPlusTreeNodeVisualizer {
       this.element.classList.remove('highlight')
     }, duration)
   }
+
+  /**
+   * O ponto de conexão é o canto superior esquerdo do nó.
+   */
+  getPointerInPoint() {
+    const rect = this.element.getBoundingClientRect()
+    const x = rect.left
+    const y = rect.top - rect.height / 2
+    return { x, y }
+  }
+
+  /**
+   * Retona um Y da parte mais baixa do nó.
+   * Já o X, é calculado com base no ponteiro.
+   * De modo que caso seja o primeiro ponteiro, o da esquerda.
+   */
+  getPointerOutPoint(pointer) {
+    const rect = this.element.getBoundingClientRect()
+
+    // Divide o tamanho do nó pela quantidade de ponteiros
+    // para saber o tamanho de cada ponteiro
+    const pointerWidth = rect.width / this.node.pointers.length
+
+    // O X é calculado com base no ponteiro
+    // De modo que caso seja o primeiro ponteiro, o da esquerda.
+    // Savendo que ponter começa em 1
+    const x = rect.left + pointerWidth * pointer
+    const y = rect.bottom - rect.height / 2
+    return { x, y }
+  }
+
+  /**
+   * Meio e na esquerda
+   */
+  getLateralInPoint() {
+    const rect = this.element.getBoundingClientRect()
+    const x = rect.left - 10
+    const y = rect.top
+    return { x, y }
+  }
+
+  /**
+   * Meio e na direita
+   */
+  getLateralOutPoint() {
+    const rect = this.element.getBoundingClientRect()
+    const x = rect.right - 10
+    const y = rect.top
+    return { x, y }
+  }
 }

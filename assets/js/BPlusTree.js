@@ -44,6 +44,81 @@ class BPlusTree extends Observable {
   isEmpty() {
     return this.root === null
   }
+
+  getPointerConnections() {
+    const levelConnections = this.getLevelConnections()
+    const leafConnections = this.getLeafConnections()
+
+    return [...levelConnections, ...leafConnections]
+  }
+
+  getLevelConnections() {
+    const connections = []
+    const stack = []
+    const visited = new Set()
+
+    stack.push(this.root)
+
+    while (stack.length > 0) {
+      const currentNode = stack.pop()
+
+      if (currentNode instanceof InternalNode) {
+        for (let i = 0; i < currentNode.pointers.length; i++) {
+          const childNode = currentNode.pointers[i]
+
+          connections.push({
+            parent: currentNode,
+            child: childNode,
+            index: i,
+          })
+
+          if (!visited.has(childNode)) {
+            stack.push(childNode)
+            visited.add(childNode)
+          }
+        }
+      }
+    }
+
+    return connections
+  }
+
+  getLeafConnections() {
+    const connections = []
+    const leafNodes = []
+
+    const stack = [this.root]
+    const visited = new Set()
+
+    while (stack.length > 0) {
+      const currentNode = stack.pop()
+
+      if (currentNode instanceof InternalNode) {
+        for (let i = 0; i < currentNode.pointers.length; i++) {
+          const childNode = currentNode.pointers[i]
+
+          if (!visited.has(childNode)) {
+            stack.push(childNode)
+            visited.add(childNode)
+          }
+        }
+      } else if (currentNode instanceof LeafNode) {
+        leafNodes.push(currentNode)
+      }
+    }
+
+    // Connect leaf nodes at the same level
+    for (let i = 0; i < leafNodes.length - 1; i++) {
+      connections.push({
+        parent: leafNodes[i + 1],
+        child: leafNodes[i],
+        isBrother: true,
+      })
+    }
+
+    return connections
+  }
+
   /**
    * Dado um valor de chave, encontra o nó folha que a chave deveria estar
    */
@@ -212,7 +287,7 @@ class BPlusTree extends Observable {
     console.log('===== DELETE ENTRY =====')
     console.log('>> value', value)
     console.log('>> pointer', pointer)
-    console.log('>> node', node.keys.slice(), node.pointers.slice())
+    // console.log('>> node', node.keys.slice(), node.pointers.slice())
     /**
      * Deleta a chave do nó
      */

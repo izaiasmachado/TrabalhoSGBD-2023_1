@@ -109,6 +109,7 @@ class BPlusTreeVisualizer {
 
   highlightNode(data) {
     const { node } = data
+    if (!this.nodeVisualizers[node.id]) return
     this.nodeVisualizers[node.id].highlightNode()
   }
 
@@ -117,13 +118,21 @@ class BPlusTreeVisualizer {
     const renderFixedScope = this.render.bind(this)
     createArrayObserver(this.levels, () => renderFixedScope())
     this.tree.subscribe(payload => this.listenerFunction(payload))
+    this.startDrawingPointers()
+  }
+
+  startDrawingPointers() {
+    this.drawingPointersInterval = setInterval(() => {
+      this.drawPointers()
+    }, 50)
+  }
+
+  stopDrawingPointers() {
+    clearInterval(this.drawingPointersInterval)
   }
 
   createElement() {
-    this.element = document.createElement('div')
-    this.element.classList.add('tree')
-    const container = document.querySelector('#container')
-    container.appendChild(this.element)
+    this.element = document.querySelector('#tree')
   }
 
   listenerFunction(event) {
@@ -184,7 +193,46 @@ class BPlusTreeVisualizer {
     this.nodeVisualizers = {}
     this.render()
 
-    const container = document.querySelector('#container')
-    container.removeChild(this.element)
+    this.stopDrawingPointers()
+  }
+
+  drawPointers() {
+    // connections
+    const connections = this.tree.getPointerConnections()
+    const canvas = document.querySelector('#canvas')
+
+    canvas.width = canvas.offsetWidth
+    canvas.height = canvas.offsetHeight
+
+    const ctx = canvas.getContext('2d')
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    connections.forEach(connection => {
+      const { parent, child } = connection
+      if (!parent || !child) return
+
+      const parentVisualizer = this.nodeVisualizers[parent.id]
+      const childVisualizer = this.nodeVisualizers[child.id]
+
+      if (!parentVisualizer || !childVisualizer) return
+
+      const parentCoordinates = connection.isBrother
+        ? parentVisualizer.getLateralOutPoint()
+        : parentVisualizer.getPointerOutPoint(connection.index)
+      const childCoordinates = connection.isBrother
+        ? childVisualizer.getLateralInPoint()
+        : childVisualizer.getPointerInPoint()
+
+      if (!parentCoordinates || !childCoordinates) return
+      if (parentCoordinates.x <= 0 || parentCoordinates.y <= 0) return
+      if (childCoordinates.x <= 0 || childCoordinates.y <= 0) return
+
+      ctx.lineWidth = 2
+
+      ctx.beginPath()
+      ctx.moveTo(parentCoordinates.x, parentCoordinates.y)
+      ctx.lineTo(childCoordinates.x, childCoordinates.y)
+      ctx.stroke()
+    })
   }
 }

@@ -40,45 +40,57 @@
           <!-- <div class="treeInput"></div> -->
 
           <div id="manual-container" class="treeOptionInput">
-            <input
-              class="input-bar"
-              id="manual-input-key"
-              placeholder="Digite uma Chave"
-            />
+            <div class="treeInsertionInputs">
+              <input
+                class="input-bar"
+                id="manual-input-key"
+                placeholder="Digite uma Chave"
+              />
+            </div>
 
-            <button
-              class="input-button pure-material-button-contained"
-              id="manual-insert-button"
-            >
-              Inserir
-            </button>
-            <button
-              class="input-button pure-material-button-contained"
-              id="manual-search-button"
-            >
-              Buscar
-            </button>
-            <button
-              class="input-button pure-material-button-contained"
-              id="manual-delete-button"
-            >
-              Deletar
-            </button>
+            <div class="treeInsertionButtons">
+              <button
+                class="input-button pure-material-button-contained"
+                id="manual-insert-button"
+              >
+                Inserir
+              </button>
+              <button
+                class="input-button pure-material-button-contained"
+                id="manual-search-button"
+              >
+                Buscar
+              </button>
+              <button
+                class="input-button pure-material-button-contained"
+                id="manual-delete-button"
+              >
+                Deletar
+              </button>
+            </div>
           </div>
-          <div id="random-container">
-            <input
-              class="input-bar"
-              type="number"
-              placeholder="Índice inicial"
-            />
-            <input class="input-bar" type="number" placeholder="Índice Final" />
-            <input
-              class="input-bar"
-              type="number"
-              placeholder="N° de elementos"
-            />
-            <button class="input-button">Inserir</button>
-            <button class="input-button">Deletar</button>
+          <div id="random-container" class="treeOptionInput">
+            <div class="treeInsertionInputs">
+              <input
+                class="input-bar"
+                type="number"
+                placeholder="Índice inicial"
+              />
+              <input
+                class="input-bar"
+                type="number"
+                placeholder="Índice Final"
+              />
+              <input
+                class="input-bar"
+                type="number"
+                placeholder="N° de elementos"
+              />
+            </div>
+            <div class="treeInsertionButtons">
+              <button class="input-button">Inserir</button>
+              <button class="input-button">Deletar</button>
+            </div>
           </div>
         </div>
 

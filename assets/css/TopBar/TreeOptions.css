@@ -15,3 +15,26 @@
   transition: all 0.5s ease; */
   /* background-color: var(--tertiary-color); */
 }
+
+.treeOptionInput {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.treeInsertionButtons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.treeInsertionInputs {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}

@@ -11,7 +11,6 @@
     <script src="assets/js/BPlusTreeNode.js"></script>
     <script src="assets/js/BPlusTreeNodeVisualizer.js"></script>
     <script src="assets/js/Controlls.js"></script>
-    <script src="assets/js/ControllsListener.js"></script>
     <script src="assets/js/EventQueue.js"></script>
     <script src="assets/js/EventProcessor.js"></script>
     <script src="assets/js/scripts.js"></script>
@@ -23,40 +22,62 @@
   </head>
   <body>
     <nav id="navbar">
-      <div class="input-type">
-        <label class="btn-switch">
+      <div class="inputContainer">
+        <div class="input-type">
+          <label class="btn-switch">
+            <input
+              value="1"
+              id="typeNode"
+              name="typeNode"
+              type="checkbox"
+              onclick="handleTypeInput()"
+            />
+            <label
+              class="btn-switch-inner"
+              data-off="Manual"
+              data-on="Random"
+              for="typeNode"
+            ></label>
+          </label>
+        </div>
+        <div id="manual-container">
           <input
-            value="1"
-            id="typeNode"
-            name="typeNode"
-            type="checkbox"
-            onclick="handleTypeInput()"
+            class="input-bar"
+            id="manual-input-key"
+            type="number"
+            placeholder="Digite uma chave"
           />
-          <label
-            class="btn-switch-inner"
-            data-off="Manual"
-            data-on="Random"
-            for="typeNode"
-          ></label>
-        </label>
+          <button class="input-button" id="manual-insert-button">
+            Inserir
+          </button>
+          <button class="input-button" id="manual-search-button">Buscar</button>
+          <button class="input-button" id="manual-delete-button">
+            Deletar
+          </button>
+        </div>
+        <div id="random-container">
+          <input class="input-bar" type="number" placeholder="Índice inicial" />
+          <input class="input-bar" type="number" placeholder="Índice Final" />
+          <input
+            class="input-bar"
+            type="number"
+            placeholder="N° de elementos"
+          />
+          <button class="input-button">Inserir</button>
+          <button class="input-button">Deletar</button>
+        </div>
       </div>
-      <div id="manual-container">
-        <input
-          class="input-bar"
-          id="manual-input-key"
-          type="number"
-          placeholder="Digite uma chave"
-        />
-        <button class="input-button" id="manual-insert-button">Inserir</button>
-        <button class="input-button" id="manual-search-button">Buscar</button>
-        <button class="input-button" id="manual-delete-button">Deletar</button>
-      </div>
-      <div id="random-container">
-        <input class="input-bar" type="number" placeholder="Índice inicial" />
-        <input class="input-bar" type="number" placeholder="Índice Final" />
-        <input class="input-bar" type="number" placeholder="N° de elementos" />
-        <button class="input-button">Inserir</button>
-        <button class="input-button">Deletar</button>
+
+      <div class="treeOptionsContainer">
+        <h3>Opções</h3>
+        <div class="treeOption">
+          <div class="treeOptionTitle">Fanout</div>
+          <div class="treeOptionSelector fanoutSelector">
+            <button class="fanoutIncrease fanoutSelectorItem">+</button>
+            <div class="treeFanout fanoutSelectorItem">0</div>
+            <button class="fanoutDescrease fanoutSelectorItem">-</button>
+          </div>
+        </div>
       </div>
     </nav>
 

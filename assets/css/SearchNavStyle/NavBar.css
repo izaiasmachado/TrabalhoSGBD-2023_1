@@ -1,8 +1,80 @@
 nav {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background-color: #55b7ff;
+  flex-direction: row;
+  gap: 30px;
+  background-color: #ffffff;
+  margin: 20px 10px;
   padding: 20px 15px;
   border-radius: 5px;
+  /* shadow */
+  box-shadow: 0px 0px 8px 0px rgba(17, 17, 17, 0.34);
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* https://cdn.dribbble.com/users/342196/screenshots/4495275/search_picker.png?resize=400x0 */
+.treeOptionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 300px;
+}
+
+.treeOption {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 30px;
+  font-weight: 600;
+}
+
+.treeOptionTitle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.fanoutSelector {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.fanoutSelectorItem {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.fanoutSelector > button {
+  background-color: #f0eff4;
+  border: none;
+  border-radius: 50px;
+  color: #ffffff;
+  padding: 5px 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #858489;
+  font-size: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 0px 8px 0px rgba(17, 17, 17, 0.34);
+}
+
+.treeFanout {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
 }

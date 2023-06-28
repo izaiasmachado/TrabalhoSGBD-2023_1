@@ -6,7 +6,8 @@
 class EventProcessor {
   constructor() {
     this.eventQueue = EventQueue.getInstance()
-    this.init()
+    this.timeInterval = 610
+    this.start()
   }
 
   static getInstance() {
@@ -16,12 +17,22 @@ class EventProcessor {
     return EventProcessor.instance
   }
 
-  init() {
+  start() {
     this.interval = setInterval(() => {
       if (!this.eventQueue.isEmpty()) {
         const event = this.eventQueue.dequeue()
         event.callback(event)
       }
-    }, 610)
+    }, this.timeInterval)
+  }
+
+  stop() {
+    clearInterval(this.interval)
+  }
+
+  changeTimeInterval(timeInterval) {
+    this.timeInterval = timeInterval
+    this.stop()
+    this.start()
   }
 }

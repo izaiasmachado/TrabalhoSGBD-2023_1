@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="assets/css/TopBar/NavBar.css" />
     <link rel="stylesheet" href="assets/css/TopBar/SelectInputType.css" />
     <link rel="stylesheet" href="assets/css/TopBar/InsertValues.css" />
+    <link rel="stylesheet" href="assets/css/TopBar/TreeOptions.css" />
     <script src="assets/js/CSSComponents/SelectInputType.js"></script>
     <!-- <script src="assets/js/TypeInput.js"></script> -->
   </head>
@@ -103,9 +104,27 @@
               </button>
             </div>
           </div>
+          <div class="treeOption">
+            <div class="treeOptionTitle">Velocidade</div>
+            <div class="treeOptionSelector">
+              <input
+                type="range"
+                class="treeSpeedSelector"
+                id="tree-speed-selector"
+                min="1"
+                max="1219"
+                value="610"
+                step="1"
+              />
+            </div>
+          </div>
         </div>
       </nav>
     </div>
+
+    <!-- minimo 1 milisecond -->
+    <!-- default 610 -->
+    <!-- maximum 1220 -->
 
     <div id="container"></div>
     <canvas id="canvas"></canvas>

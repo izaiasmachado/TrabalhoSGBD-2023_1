@@ -24,6 +24,8 @@ class Controlls extends Observable {
     this.manualSearchButton = document.getElementById('manual-search-button')
     this.manualDeleteButton = document.getElementById('manual-delete-button')
     this.showFanout = document.getElementById('show-fanout')
+    this.speedSelector = document.getElementById('tree-speed-selector')
+
     this.showFanout.textContent = this.tree.fanout
 
     this.descreaseFanoutButton = document.getElementById(
@@ -72,6 +74,15 @@ class Controlls extends Observable {
       this.fanout = this.fanout - 1
       this.showFanout.textContent = this.fanout
       this.createNewTree()
+    })
+
+    this.speedSelector.addEventListener('change', e => {
+      e.preventDefault()
+
+      console.log(e.target.value)
+      const timeInterval = 1220 - Number(e.target.value)
+      console.log(timeInterval)
+      EventProcessor.getInstance().changeTimeInterval(timeInterval)
     })
   }
 

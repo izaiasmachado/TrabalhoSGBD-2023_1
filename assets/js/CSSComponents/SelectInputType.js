@@ -8,14 +8,14 @@ window.addEventListener('load', function () {
     console.log('selectInputManual')
     selectInputManual.classList.add('selected')
     selectInputRandom.classList.remove('selected')
-    manualInputBar.style.display = 'block'
+    manualInputBar.style.display = 'flex'
     randomInputBar.style.display = 'none'
   })
 
   selectInputRandom.addEventListener('click', function () {
     selectInputRandom.classList.add('selected')
     selectInputManual.classList.remove('selected')
-    randomInputBar.style.display = 'block'
+    randomInputBar.style.display = 'flex'
     manualInputBar.style.display = 'none'
   })
 })

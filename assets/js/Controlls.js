@@ -2,75 +2,58 @@ class Controlls extends Observable {
   constructor() {
     super()
     this.init()
-    this.addEventListeners()
+    this.addButtonsEventListeners()
   }
 
   init() {
+    this.tree = new BPlusTree(4)
+    this.treeVisualizer = new BPlusTreeVisualizer(this.tree)
+
     this.manualInputKey = document.getElementById('manual-input-key')
     this.manualInsertButton = document.getElementById('manual-insert-button')
     this.manualSearchButton = document.getElementById('manual-search-button')
     this.manualDeleteButton = document.getElementById('manual-delete-button')
   }
 
-  addEventListeners() {
-    this.addEventListenersForButtons()
+  addButtonsEventListeners() {
+    this.manualInsertButton.addEventListener('click', e => {
+      e.preventDefault()
+
+      const value = this.manualInputKey.value
+      this.handleManualAction({ action: 'insert', value })
+    })
+
+    this.manualSearchButton.addEventListener('click', e => {
+      e.preventDefault()
+
+      const value = this.manualInputKey.value
+      this.handleManualAction({ action: 'search', value })
+    })
+
+    this.manualDeleteButton.addEventListener('click', e => {
+      e.preventDefault()
+
+      const value = this.manualInputKey.value
+      this.handleManualAction({ action: 'delete', value })
+    })
   }
 
-  handleButtonPress(data) {
-    const { type } = data
+  handleManualAction(data) {
+    const { action, value } = data
+    const pointerUUID = uuidv4()
 
-    switch (type) {
-      case 'manual':
-        this.handleManualAction(data)
+    switch (action) {
+      case 'insert':
+        this.tree.insert(value, pointerUUID)
         break
-      case 'random':
-        this.handleRandomAction(data)
+      case 'search':
+        this.tree.find(value)
+        break
+      case 'delete':
+        this.tree.delete(value)
         break
       default:
         break
     }
-  }
-
-  handleManualAction(data) {
-    this.notifyAll({
-      type: 'manual',
-      action: data.action,
-      value: data.value,
-    })
-  }
-
-  listenerManualInsertion(e) {
-    e.preventDefault()
-
-    const value = this.manualInputKey.value
-    this.handleManualAction({ action: 'insert', value })
-  }
-
-  listenerManualSearch(e) {
-    e.preventDefault()
-
-    const value = this.manualInputKey.value
-    this.handleManualAction({ action: 'search', value })
-  }
-
-  listenerManualDelete(e) {
-    e.preventDefault()
-
-    const value = this.manualInputKey.value
-    this.handleManualAction({ action: 'delete', value })
-  }
-
-  addEventListenersForButtons() {
-    this.manualInsertButton.addEventListener('click', e =>
-      this.listenerManualInsertion(e),
-    )
-
-    this.manualSearchButton.addEventListener('click', e =>
-      this.listenerManualSearch(e),
-    )
-
-    this.manualDeleteButton.addEventListener('click', e =>
-      this.listenerManualDelete(e),
-    )
   }
 }

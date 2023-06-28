@@ -46,54 +46,74 @@ class BPlusTree extends Observable {
   }
 
   getPointerConnections() {
+    const levelConnections = this.getLevelConnections()
+    const leafConnections = this.getLeafConnections()
+
+    return [...levelConnections, ...leafConnections]
+  }
+
+  getLevelConnections() {
     const connections = []
     const stack = []
     const visited = new Set()
 
-    // Start with the root node
     stack.push(this.root)
 
     while (stack.length > 0) {
       const currentNode = stack.pop()
 
       if (currentNode instanceof InternalNode) {
-        // If the current node is an internal node
         for (let i = 0; i < currentNode.pointers.length; i++) {
           const childNode = currentNode.pointers[i]
 
-          // Add parent-child pointer connection to the list
           connections.push({
             parent: currentNode,
             child: childNode,
             index: i,
           })
 
-          // If the child node has not been visited, add it to the stack
+          if (!visited.has(childNode)) {
+            stack.push(childNode)
+            visited.add(childNode)
+          }
+        }
+      }
+    }
+
+    return connections
+  }
+
+  getLeafConnections() {
+    const connections = []
+    const leafNodes = []
+
+    const stack = [this.root]
+    const visited = new Set()
+
+    while (stack.length > 0) {
+      const currentNode = stack.pop()
+
+      if (currentNode instanceof InternalNode) {
+        for (let i = 0; i < currentNode.pointers.length; i++) {
+          const childNode = currentNode.pointers[i]
+
           if (!visited.has(childNode)) {
             stack.push(childNode)
             visited.add(childNode)
           }
         }
       } else if (currentNode instanceof LeafNode) {
-        const parent = this.parent(currentNode)
-        if (!parent) continue
-        const index = parent.pointers.findIndex(p => p === currentNode)
-        const rightSibling = parent.pointers[index + 1]
-
-        if (rightSibling) {
-          connections.push({
-            parent: currentNode,
-            child: rightSibling,
-            isBrother: true,
-          })
-        }
-
-        // If the leaf node has not been visited, add it to the stack
-        if (!visited.has(currentNode)) {
-          stack.push(currentNode)
-          visited.add(currentNode)
-        }
+        leafNodes.push(currentNode)
       }
+    }
+
+    // Connect leaf nodes at the same level
+    for (let i = 0; i < leafNodes.length - 1; i++) {
+      connections.push({
+        parent: leafNodes[i + 1],
+        child: leafNodes[i],
+        isBrother: true,
+      })
     }
 
     return connections

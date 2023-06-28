@@ -178,4 +178,13 @@ class BPlusTreeVisualizer {
       this.element.appendChild(levelVisualizer.element)
     })
   }
+
+  clear() {
+    this.levels = []
+    this.nodeVisualizers = {}
+    this.render()
+
+    const container = document.querySelector('#container')
+    container.removeChild(this.element)
+  }
 }

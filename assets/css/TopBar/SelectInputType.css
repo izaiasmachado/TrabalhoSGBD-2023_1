@@ -1,0 +1,23 @@
+.selectInputTypeContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  max-height: 40px;
+}
+
+.selectedInputOption {
+  padding: 4px 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-bottom: 3px solid var(--tertiary-color);
+  cursor: pointer;
+}
+
+.selectedInputOption.selected {
+  background-color: var(--tertiary-color);
+  color: var(--tertiary-text-color);
+}

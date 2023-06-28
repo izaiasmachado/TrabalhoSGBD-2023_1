@@ -11,54 +11,101 @@
     <script src="assets/js/BPlusTreeNode.js"></script>
     <script src="assets/js/BPlusTreeNodeVisualizer.js"></script>
     <script src="assets/js/Controlls.js"></script>
-    <script src="assets/js/ControllsListener.js"></script>
     <script src="assets/js/EventQueue.js"></script>
     <script src="assets/js/EventProcessor.js"></script>
     <script src="assets/js/scripts.js"></script>
 
-    <link rel="stylesheet" href="assets/css/SearchNavStyle/TypeInput.css" />
-    <link rel="stylesheet" href="assets/css/SearchNavStyle/SearchBar.css" />
-    <link rel="stylesheet" href="assets/css/SearchNavStyle/NavBar.css" />
-    <script src="assets/js/TypeInput.js"></script>
+    <!-- <link rel="stylesheet" href="assets/css/SearchNavStyle/TypeInput.css" />
+    <link rel="stylesheet" href="assets/css/SearchNavStyle/SearchBar.css" /> -->
+    <link rel="stylesheet" href="assets/css/TopBar/NavBar.css" />
+    <link rel="stylesheet" href="assets/css/TopBar/SelectInputType.css" />
+    <link rel="stylesheet" href="assets/css/TopBar/InsertValues.css" />
+    <script src="assets/js/CSSComponents/SelectInputType.js"></script>
+    <!-- <script src="assets/js/TypeInput.js"></script> -->
   </head>
   <body>
-    <nav id="navbar">
-      <div class="input-type">
-        <label class="btn-switch">
-          <input
-            value="1"
-            id="typeNode"
-            name="typeNode"
-            type="checkbox"
-            onclick="handleTypeInput()"
-          />
-          <label
-            class="btn-switch-inner"
-            data-off="Manual"
-            data-on="Random"
-            for="typeNode"
-          ></label>
-        </label>
-      </div>
-      <div id="manual-container">
-        <input
-          class="input-bar"
-          id="manual-input-key"
-          type="number"
-          placeholder="Digite uma chave"
-        />
-        <button class="input-button" id="manual-insert-button">Inserir</button>
-        <button class="input-button" id="manual-search-button">Buscar</button>
-        <button class="input-button" id="manual-delete-button">Deletar</button>
-      </div>
-      <div id="random-container">
-        <input class="input-bar" type="number" placeholder="Índice inicial" />
-        <input class="input-bar" type="number" placeholder="Índice Final" />
-        <input class="input-bar" type="number" placeholder="N° de elementos" />
-        <button class="input-button">Inserir</button>
-        <button class="input-button">Deletar</button>
-      </div>
-    </nav>
+    <div id="navbarContainer">
+      <nav id="navbar">
+        <!-- <div class="insertItemsContainer"></div> -->
+        <div class="treeInputOptions">
+          <div class="selectInputTypeContainer">
+            <div id="select-input-manual" class="selectedInputOption selected">
+              Manual
+            </div>
+            <div id="select-input-random" class="selectedInputOption">
+              Aleatório
+            </div>
+          </div>
+          <!-- <div class="treeInput"></div> -->
+
+          <div id="manual-container" class="treeOptionInput">
+            <input
+              class="input-bar"
+              id="manual-input-key"
+              placeholder="Digite uma Chave"
+            />
+
+            <button
+              class="input-button pure-material-button-contained"
+              id="manual-insert-button"
+            >
+              Inserir
+            </button>
+            <button
+              class="input-button pure-material-button-contained"
+              id="manual-search-button"
+            >
+              Buscar
+            </button>
+            <button
+              class="input-button pure-material-button-contained"
+              id="manual-delete-button"
+            >
+              Deletar
+            </button>
+          </div>
+          <div id="random-container">
+            <input
+              class="input-bar"
+              type="number"
+              placeholder="Índice inicial"
+            />
+            <input class="input-bar" type="number" placeholder="Índice Final" />
+            <input
+              class="input-bar"
+              type="number"
+              placeholder="N° de elementos"
+            />
+            <button class="input-button">Inserir</button>
+            <button class="input-button">Deletar</button>
+          </div>
+        </div>
+
+        <div class="treeOptionsContainer">
+          <h3>Opções</h3>
+          <div class="treeOption">
+            <div class="treeOptionTitle">Fanout</div>
+            <div class="treeOptionSelector fanoutSelector">
+              <button
+                class="fanoutIncrease fanoutSelectorItem"
+                id="increase-fanout-button"
+              >
+                +
+              </button>
+              <div class="treeFanout fanoutSelectorItem" id="show-fanout">
+                4
+              </div>
+              <button
+                class="fanoutDescrease fanoutSelectorItem"
+                id="decrease-fanout-button"
+              >
+                -
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </div>
 
     <div id="container"></div>
     <canvas id="canvas"></canvas>

@@ -1,10 +1,7 @@
 window.addEventListener('load', () => {
   const eventProcessor = EventProcessor.getInstance()
   const eventQueue = EventQueue.getInstance()
-  const tree2 = new BPlusTree(4)
-
-  const treeVisualizer = new BPlusTreeVisualizer(tree2)
-  const controllsListener = new ControllsListener(tree2)
+  const controlls = new Controlls()
 
   // print tree every 3 seconds
 
@@ -111,7 +108,7 @@ window.addEventListener('load', () => {
   // node.insert('Chave2', {})
   // node.insert('Chave3', {})
 
-  setInterval(() => {
-    console.log('tree', tree2)
-  }, 3000)
+  // setInterval(() => {
+  //   console.log('tree', tree2)
+  // }, 3000)
 })

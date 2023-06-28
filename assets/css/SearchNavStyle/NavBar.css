@@ -1,8 +1,0 @@
-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background-color: #55b7ff;
-  padding: 20px 15px;
-  border-radius: 5px;
-}

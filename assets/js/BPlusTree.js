@@ -44,6 +44,42 @@ class BPlusTree extends Observable {
   isEmpty() {
     return this.root === null
   }
+
+  getPointerConnections() {
+    const connections = []
+    const stack = []
+    const visited = new Set()
+
+    // Start with the root node
+    stack.push(this.root)
+
+    while (stack.length > 0) {
+      const currentNode = stack.pop()
+
+      if (currentNode instanceof InternalNode) {
+        // If the current node is an internal node
+        for (let i = 0; i < currentNode.pointers.length; i++) {
+          const childNode = currentNode.pointers[i]
+
+          // Add parent-child pointer connection to the list
+          connections.push({
+            parent: currentNode,
+            child: childNode,
+            index: i,
+          })
+
+          // If the child node has not been visited, add it to the stack
+          if (!visited.has(childNode)) {
+            stack.push(childNode)
+            visited.add(childNode)
+          }
+        }
+      }
+    }
+
+    return connections
+  }
+
   /**
    * Dado um valor de chave, encontra o nó folha que a chave deveria estar
    */

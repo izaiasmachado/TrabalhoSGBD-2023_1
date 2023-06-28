@@ -25,143 +25,146 @@
     <!-- <script src="assets/js/TypeInput.js"></script> -->
   </head>
   <body>
-    <div id="navbarContainer">
-      <nav id="navbar">
-        <!-- <div class="insertItemsContainer"></div> -->
-        <div class="treeInputOptions">
-          <div class="selectInputTypeContainer">
-            <div id="select-input-manual" class="selectedInputOption selected">
-              Manual
-            </div>
-            <div id="select-insert-random" class="selectedInputOption">
-              Inserção Aleatória
-            </div>
-            <div id="select-delete-random" class="selectedInputOption">
-              Deleção Aleatória
-            </div>
-          </div>
-          <!-- <div class="treeInput"></div> -->
-
-          <div id="manual-container" class="treeOptionInput">
-            <div class="treeInsertionInputs">
-              <input
-                class="input-bar"
-                id="manual-input-key"
-                placeholder="Digite uma Chave"
-              />
-            </div>
-
-            <div class="treeInsertionButtons">
-              <button
-                class="input-button pure-material-button-contained"
-                id="manual-insert-button"
-              >
-                Inserir
-              </button>
-              <button
-                class="input-button pure-material-button-contained"
-                id="manual-search-button"
-              >
-                Buscar
-              </button>
-              <button
-                class="input-button pure-material-button-contained"
-                id="manual-delete-button"
-              >
-                Deletar
-              </button>
-            </div>
-          </div>
-          <div id="random-insert-container" class="treeOptionInput">
-            <div class="treeInsertionInputs">
-              <input
-                id="random-insert-input-start"
-                class="input-bar"
-                type="number"
-                placeholder="Índice inicial"
-              />
-              <input
-                id="random-insert-input-end"
-                class="input-bar"
-                type="number"
-                placeholder="Índice Final"
-              />
-              <input
-                id="random-insert-input-count"
-                class="input-bar"
-                type="number"
-                placeholder="N° de elementos"
-              />
-            </div>
-            <div class="treeInsertionButtons">
-              <button id="random-insert-button" class="input-button">
-                Inserir
-              </button>
-            </div>
-          </div>
-
-          <div id="random-delete-container" class="treeOptionInput">
-            <div class="treeInsertionInputs">
-              <input
-                id="random-deletion-input-count"
-                class="input-bar"
-                type="number"
-                placeholder="N° de elementos"
-              />
-            </div>
-            <div class="treeInsertionButtons">
-              <button id="random-delete-button" class="input-button">
-                Deletar
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="treeOptionsContainer">
-          <h3>Opções</h3>
-          <div class="treeOption">
-            <div class="treeOptionTitle">Fanout</div>
-            <div class="treeOptionSelector fanoutSelector">
-              <button
-                class="fanoutIncrease fanoutSelectorItem"
-                id="increase-fanout-button"
-              >
-                +
-              </button>
-              <div class="treeFanout fanoutSelectorItem" id="show-fanout">
-                4
-              </div>
-              <button
-                class="fanoutDescrease fanoutSelectorItem"
-                id="decrease-fanout-button"
-              >
-                -
-              </button>
-            </div>
-          </div>
-          <div class="treeOption">
-            <div class="treeOptionTitle">Velocidade</div>
-            <div class="treeOptionSelector">
-              <input
-                type="range"
-                class="treeSpeedSelector"
-                id="tree-speed-selector"
-                min="1"
-                max="1219"
-                value="610"
-                step="1"
-              />
-            </div>
-          </div>
-        </div>
-      </nav>
-    </div>
-
     <!-- minimo 1 milisecond -->
     <!-- default 610 -->
     <!-- maximum 1220 -->
 
-    <div id="container"></div>
-    <canvas id="canvas"></canvas>
+    <div id="container">
+      <canvas id="canvas"></canvas>
+      <div id="navbarContainer">
+        <nav id="navbar">
+          <!-- <div class="insertItemsContainer"></div> -->
+          <div class="treeInputOptions">
+            <div class="selectInputTypeContainer">
+              <div
+                id="select-input-manual"
+                class="selectedInputOption selected"
+              >
+                Manual
+              </div>
+              <div id="select-insert-random" class="selectedInputOption">
+                Inserção Aleatória
+              </div>
+              <div id="select-delete-random" class="selectedInputOption">
+                Deleção Aleatória
+              </div>
+            </div>
+            <!-- <div class="treeInput"></div> -->
+
+            <div id="manual-container" class="treeOptionInput">
+              <div class="treeInsertionInputs">
+                <input
+                  class="input-bar"
+                  id="manual-input-key"
+                  placeholder="Digite uma Chave"
+                />
+              </div>
+
+              <div class="treeInsertionButtons">
+                <button
+                  class="input-button pure-material-button-contained"
+                  id="manual-insert-button"
+                >
+                  Inserir
+                </button>
+                <button
+                  class="input-button pure-material-button-contained"
+                  id="manual-search-button"
+                >
+                  Buscar
+                </button>
+                <button
+                  class="input-button pure-material-button-contained"
+                  id="manual-delete-button"
+                >
+                  Deletar
+                </button>
+              </div>
+            </div>
+            <div id="random-insert-container" class="treeOptionInput">
+              <div class="treeInsertionInputs">
+                <input
+                  id="random-insert-input-start"
+                  class="input-bar"
+                  type="number"
+                  placeholder="Índice inicial"
+                />
+                <input
+                  id="random-insert-input-end"
+                  class="input-bar"
+                  type="number"
+                  placeholder="Índice Final"
+                />
+                <input
+                  id="random-insert-input-count"
+                  class="input-bar"
+                  type="number"
+                  placeholder="N° de elementos"
+                />
+              </div>
+              <div class="treeInsertionButtons">
+                <button id="random-insert-button" class="input-button">
+                  Inserir
+                </button>
+              </div>
+            </div>
+
+            <div id="random-delete-container" class="treeOptionInput">
+              <div class="treeInsertionInputs">
+                <input
+                  id="random-deletion-input-count"
+                  class="input-bar"
+                  type="number"
+                  placeholder="N° de elementos"
+                />
+              </div>
+              <div class="treeInsertionButtons">
+                <button id="random-delete-button" class="input-button">
+                  Deletar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="treeOptionsContainer">
+            <h3>Opções</h3>
+            <div class="treeOption">
+              <div class="treeOptionTitle">Fanout</div>
+              <div class="treeOptionSelector fanoutSelector">
+                <button
+                  class="fanoutIncrease fanoutSelectorItem"
+                  id="increase-fanout-button"
+                >
+                  +
+                </button>
+                <div class="treeFanout fanoutSelectorItem" id="show-fanout">
+                  4
+                </div>
+                <button
+                  class="fanoutDescrease fanoutSelectorItem"
+                  id="decrease-fanout-button"
+                >
+                  -
+                </button>
+              </div>
+            </div>
+            <div class="treeOption">
+              <div class="treeOptionTitle">Velocidade</div>
+              <div class="treeOptionSelector">
+                <input
+                  type="range"
+                  class="treeSpeedSelector"
+                  id="tree-speed-selector"
+                  min="1"
+                  max="1219"
+                  value="610"
+                  step="1"
+                />
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
   </body>
 </html>

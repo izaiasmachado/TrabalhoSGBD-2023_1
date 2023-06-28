@@ -14,7 +14,7 @@ body {
 }
 
 #container {
-  margin-top: 40px;
+  position: relative;
 }
 
 .tree {
@@ -117,8 +117,8 @@ body {
   }
 }
 
-canvas {
-  position: fixed;
+#canvas {
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;

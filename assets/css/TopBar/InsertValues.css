@@ -77,6 +77,10 @@
   transform: translateY(-1px);
 }
 
-#random-container {
+#random-insert-container {
+  display: none;
+}
+
+#random-delete-container {
   display: none;
 }

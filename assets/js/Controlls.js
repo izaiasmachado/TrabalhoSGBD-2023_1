@@ -5,6 +5,7 @@ class Controlls extends Observable {
     this.init()
     this.addButtonsEventListeners()
     this.fanout = 4
+    this.treeKeys = new Set()
   }
 
   createTree() {
@@ -24,10 +25,20 @@ class Controlls extends Observable {
     this.manualSearchButton = document.getElementById('manual-search-button')
     this.manualDeleteButton = document.getElementById('manual-delete-button')
 
-    this.randomInputStart = document.getElementById('random-input-start')
-    this.randomInputEnd = document.getElementById('random-input-end')
-    this.randomInputCount = document.getElementById('random-input-count')
+    this.randomInsertionInputStart = document.getElementById(
+      'random-insert-input-start',
+    )
+    this.randomInsertionInputEnd = document.getElementById(
+      'random-insert-input-end',
+    )
+    this.randomInsertionInputCount = document.getElementById(
+      'random-insert-input-count',
+    )
     this.randomInsertButton = document.getElementById('random-insert-button')
+
+    this.randomDeletionInputCount = document.getElementById(
+      'random-deletion-input-count',
+    )
     this.randomDeleteButton = document.getElementById('random-delete-button')
 
     this.showFanout = document.getElementById('show-fanout')
@@ -41,6 +52,10 @@ class Controlls extends Observable {
     this.increaseFanoutButton = document.getElementById(
       'increase-fanout-button',
     )
+
+    setInterval(() => {
+      console.log('tree', this.tree)
+    }, 3000)
   }
 
   addButtonsEventListeners() {
@@ -54,14 +69,14 @@ class Controlls extends Observable {
     this.manualSearchButton.addEventListener('click', e => {
       e.preventDefault()
 
-      const value = this.manualInputKey.value
+      const value = parseNumberIfPossible(this.manualInputKey.value)
       this.handleManualAction({ action: 'search', value })
     })
 
     this.manualDeleteButton.addEventListener('click', e => {
       e.preventDefault()
 
-      const value = this.manualInputKey.value
+      const value = parseNumberIfPossible(this.manualInputKey.value)
       this.handleManualAction({ action: 'delete', value })
     })
 
@@ -95,9 +110,9 @@ class Controlls extends Observable {
     this.randomInsertButton.addEventListener('click', e => {
       e.preventDefault()
 
-      const start = Number(this.randomInputStart.value)
-      const end = Number(this.randomInputEnd.value)
-      const count = Number(this.randomInputCount.value)
+      const start = Number(this.randomInsertionInputStart.value)
+      const end = Number(this.randomInsertionInputEnd.value)
+      const count = Number(this.randomInsertionInputCount.value)
 
       console.log(start, end, count)
       this.handleRandomAction({ action: 'insert', start, end, count })
@@ -105,32 +120,39 @@ class Controlls extends Observable {
 
     this.randomDeleteButton.addEventListener('click', e => {
       e.preventDefault()
-
-      const start = Number(this.randomInputStart.value)
-      const end = Number(this.randomInputEnd.value)
-      const count = Number(this.randomInputCount.value)
-
-      this.handleRandomAction({ action: 'delete', start, end, count })
+      const count = Number(this.randomDeletionInputCount.value)
+      this.handleRandomAction({ action: 'delete', count })
     })
   }
 
   handleRandomAction(data) {
-    const { action, start, end, count } = data
-    const randomNumbers = generateRandomUniqueNumbers(start, end, count)
-
-    if (!randomNumbers) return
+    const { action, count } = data
 
     switch (action) {
       case 'insert':
+        const { start, end } = data
+        const randomNumbers = generateRandomUniqueNumbers(start, end, count)
+
+        if (!randomNumbers) return
+
         randomNumbers.forEach(value => {
           const pointerUUID = uuidv4()
+          this.treeKeys.add(value)
           this.tree.insert(value, pointerUUID)
         })
         break
       case 'delete':
-        randomNumbers.forEach(value => {
-          this.tree.delete(value)
-        })
+        // GENERATE count random numbers
+        // DELETE count random numbers
+
+        if (this.treeKeys.size < count) return
+
+        for (let i = 0; i < count; i++) {
+          const randomIndex = Math.floor(Math.random() * this.treeKeys.size)
+          const randomKey = Array.from(this.treeKeys)[randomIndex]
+          this.treeKeys.delete(randomKey)
+          this.tree.delete(randomKey, null)
+        }
         break
       default:
         break
@@ -143,13 +165,15 @@ class Controlls extends Observable {
 
     switch (action) {
       case 'insert':
+        this.treeKeys.add(value)
         this.tree.insert(value, pointerUUID)
         break
       case 'search':
         this.tree.find(value)
         break
       case 'delete':
-        this.tree.delete(value)
+        this.treeKeys.delete(value)
+        this.tree.delete(value, null)
         break
       default:
         break

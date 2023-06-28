@@ -202,7 +202,8 @@ class BPlusTree extends Observable {
   }
 
   delete(value, pointer) {
-    const leafNode = this.find(value)
+    const leafNode = this.findSupposedLeafNode(value)
+    console.log(leafNode)
     if (leafNode === null) return
     this.deleteEntry(value, pointer, leafNode)
   }

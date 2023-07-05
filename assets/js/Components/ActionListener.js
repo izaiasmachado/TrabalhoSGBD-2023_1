@@ -44,7 +44,6 @@ class ActionListener {
 
   addEventListeners() {
     // Ações manuais
-    console.log(this.manualInsertButton)
     this.manualInsertButton.addEventListener('click', e => {
       e.preventDefault()
 
@@ -86,7 +85,6 @@ class ActionListener {
       const end = Number(this.randomInsertionInputEnd.value)
       const count = Number(this.randomInsertionInputCount.value)
 
-      console.log(start, end, count)
       this.callback({
         type: 'random',
         action: 'insert',

@@ -4,9 +4,7 @@ class Controlls extends Observable {
     this.fanout = 4
     this.treeKeys = new Set()
     this.treeSelector = TreeSelector.getInstance()
-    this.createNewTree('b-plus-tree')
     this.init()
-    this.addButtonsEventListeners()
   }
 
   static getInstance() {
@@ -41,66 +39,24 @@ class Controlls extends Observable {
   }
 
   createNewBTree() {
-    console.log('createNewBTree')
     this.tree = undefined
     this.treeVisualizer = undefined
   }
 
   init() {
-    this.showFanout = document.getElementById('show-fanout')
-    this.speedSelector = document.getElementById('tree-speed-selector')
-
-    this.showFanout.textContent = this.tree.fanout
-
-    this.descreaseFanoutButton = document.getElementById(
-      'decrease-fanout-button',
-    )
-    this.increaseFanoutButton = document.getElementById(
-      'increase-fanout-button',
-    )
-
-    this.clearTreeButton = document.getElementById('clear-tree-button')
-
-    setInterval(() => {
-      console.log('tree', this.tree)
-    }, 3000)
+    this.createNewTree('b-plus-tree')
 
     this.treeSelector.setChangeTreeCallback(this.createNewTree.bind(this))
     ActionListener.getInstance().setCallback(data => {
       this.handleAction(data)
     })
-  }
 
-  addButtonsEventListeners() {
-    this.increaseFanoutButton.addEventListener('click', e => {
-      e.preventDefault()
-
-      if (this.tree.fanout === 10) return
-      this.fanout = this.fanout + 1
-      this.showFanout.textContent = this.fanout
+    OptionListener.getInstance().setChangeFanoutCallback(fanout => {
+      this.fanout = fanout
       this.createNewTree()
     })
 
-    this.descreaseFanoutButton.addEventListener('click', e => {
-      e.preventDefault()
-
-      if (this.tree.fanout === 3) return
-      this.fanout = this.fanout - 1
-      this.showFanout.textContent = this.fanout
-      this.createNewTree()
-    })
-
-    this.speedSelector.addEventListener('change', e => {
-      e.preventDefault()
-
-      console.log(e.target.value)
-      const timeInterval = 1220 - Number(e.target.value)
-      console.log(timeInterval)
-      EventProcessor.getInstance().changeTimeInterval(timeInterval)
-    })
-
-    this.clearTreeButton.addEventListener('click', e => {
-      e.preventDefault()
+    OptionListener.getInstance().setClearTreeCallback(() => {
       this.createNewTree()
     })
   }

@@ -16,3 +16,8 @@
   justify-content: center;
   gap: 5px;
 }
+
+#clear-tree-button {
+  min-height: 40px;
+  height: 40px;
+}

@@ -9,6 +9,14 @@ class Controlls extends Observable {
     this.addButtonsEventListeners()
   }
 
+  static getInstance() {
+    if (!Controlls.instance) {
+      Controlls.instance = new Controlls()
+    }
+
+    return Controlls.instance
+  }
+
   changeTree(treeType) {
     this.createNewTree(treeType)
   }
@@ -213,3 +221,7 @@ class Controlls extends Observable {
     }
   }
 }
+
+window.addEventListener('load', () => {
+  Controlls.getInstance()
+})

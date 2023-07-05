@@ -25,15 +25,31 @@
 
     <link rel="stylesheet" href="assets/css/BottomBar/BottomControllsBar.css" />
     <script src="assets/js/CSSComponents/BottomBar.js"></script>
+
+    <link rel="stylesheet" href="assets/css/TreeSelector/TreeSelector.css" />
+    <script src="assets/js/CSSComponents/TreeSelector.js"></script>
+
     <!-- <script src="assets/js/TypeInput.js"></script> -->
   </head>
   <body>
     <!-- minimo 1 milisecond -->
     <!-- default 610 -->
     <!-- maximum 1220 -->
-
+    <canvas id="canvas"></canvas>
     <div id="container">
-      <canvas id="canvas"></canvas>
+      <div class="treeSelector">
+        <div id="b-plus-button" class="treeSelectorTitle selected">
+          Árvore B+
+        </div>
+        <div class="treeSelectorIcon" id="b-icon">
+          <img src="assets/img/chevron-left.svg" />
+        </div>
+        <div class="treeSelectorIcon selected" id="b-plus-icon">
+          <img src="assets/img/chevron-right.svg" />
+        </div>
+        <div id="b-button" class="treeSelectorTitle">Árvore B</div>
+      </div>
+
       <div id="navbarContainer">
         <nav id="navbar">
           <!-- <div class="insertItemsContainer"></div> -->
@@ -205,6 +221,7 @@
           </div>
         </div>
       </div>
+
       <div id="tree"></div>
     </div>
   </body>

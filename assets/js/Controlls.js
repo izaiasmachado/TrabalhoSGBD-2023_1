@@ -3,16 +3,43 @@ class Controlls extends Observable {
     super()
     this.fanout = 4
     this.treeKeys = new Set()
-    this.createNewTree()
+    this.treeSelector = TreeSelector.getInstance()
+    this.createNewTree('b-plus-tree')
     this.init()
     this.addButtonsEventListeners()
   }
 
-  createNewTree() {
+  changeTree(treeType) {
+    this.createNewTree(treeType)
+  }
+
+  createNewTree(treeType) {
+    if (!treeType) treeType = this.treeSelector.getSelectedTreeType()
     if (this.treeVisualizer) this.treeVisualizer.clear()
+
+    switch (treeType) {
+      case 'b-tree':
+        this.createNewBTree()
+        break
+      case 'b-plus-tree':
+        this.createNewBPlusTree()
+        break
+      default:
+        break
+    }
+
+    BottomBar.getInstance().reset()
+  }
+
+  createNewBPlusTree() {
     this.tree = new BPlusTree(this.fanout)
     this.treeVisualizer = new BPlusTreeVisualizer(this.tree)
-    BottomBar.getInstance().reset()
+  }
+
+  createNewBTree() {
+    console.log('createNewBTree')
+    this.tree = undefined
+    this.treeVisualizer = undefined
   }
 
   init() {
@@ -54,6 +81,8 @@ class Controlls extends Observable {
     setInterval(() => {
       console.log('tree', this.tree)
     }, 3000)
+
+    this.treeSelector.setChangeTreeCallback(this.changeTree.bind(this))
   }
 
   addButtonsEventListeners() {

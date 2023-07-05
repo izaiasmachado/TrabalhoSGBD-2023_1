@@ -96,7 +96,7 @@ class BPlusTreeNodeVisualizer {
   getPointerInPoint() {
     const rect = this.element.getBoundingClientRect()
     const x = rect.left
-    const y = rect.top - rect.height / 2
+    const y = rect.top
     return { x, y }
   }
 
@@ -114,9 +114,9 @@ class BPlusTreeNodeVisualizer {
 
     // O X é calculado com base no ponteiro
     // De modo que caso seja o primeiro ponteiro, o da esquerda.
-    // Savendo que ponter começa em 1
+    // Sabendo que ponter começa em 1
     const x = rect.left + pointerWidth * pointer
-    const y = rect.bottom - rect.height / 2
+    const y = rect.bottom
     return { x, y }
   }
 
@@ -125,8 +125,8 @@ class BPlusTreeNodeVisualizer {
    */
   getLateralInPoint() {
     const rect = this.element.getBoundingClientRect()
-    const x = rect.left - 10
-    const y = rect.top
+    const x = rect.left
+    const y = rect.top + rect.height / 2
     return { x, y }
   }
 
@@ -135,8 +135,8 @@ class BPlusTreeNodeVisualizer {
    */
   getLateralOutPoint() {
     const rect = this.element.getBoundingClientRect()
-    const x = rect.right - 10
-    const y = rect.top
+    const x = rect.right
+    const y = rect.top + rect.height / 2
     return { x, y }
   }
 }

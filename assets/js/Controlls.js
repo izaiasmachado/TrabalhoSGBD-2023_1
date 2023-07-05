@@ -17,10 +17,6 @@ class Controlls extends Observable {
     return Controlls.instance
   }
 
-  changeTree(treeType) {
-    this.createNewTree(treeType)
-  }
-
   createNewTree(treeType) {
     if (!treeType) treeType = this.treeSelector.getSelectedTreeType()
     if (this.treeVisualizer) this.treeVisualizer.clear()
@@ -51,27 +47,6 @@ class Controlls extends Observable {
   }
 
   init() {
-    this.manualInputKey = document.getElementById('manual-input-key')
-    this.manualInsertButton = document.getElementById('manual-insert-button')
-    this.manualSearchButton = document.getElementById('manual-search-button')
-    this.manualDeleteButton = document.getElementById('manual-delete-button')
-
-    this.randomInsertionInputStart = document.getElementById(
-      'random-insert-input-start',
-    )
-    this.randomInsertionInputEnd = document.getElementById(
-      'random-insert-input-end',
-    )
-    this.randomInsertionInputCount = document.getElementById(
-      'random-insert-input-count',
-    )
-    this.randomInsertButton = document.getElementById('random-insert-button')
-
-    this.randomDeletionInputCount = document.getElementById(
-      'random-deletion-input-count',
-    )
-    this.randomDeleteButton = document.getElementById('random-delete-button')
-
     this.showFanout = document.getElementById('show-fanout')
     this.speedSelector = document.getElementById('tree-speed-selector')
 
@@ -90,31 +65,13 @@ class Controlls extends Observable {
       console.log('tree', this.tree)
     }, 3000)
 
-    this.treeSelector.setChangeTreeCallback(this.changeTree.bind(this))
+    this.treeSelector.setChangeTreeCallback(this.createNewTree.bind(this))
+    ActionListener.getInstance().setCallback(data => {
+      this.handleAction(data)
+    })
   }
 
   addButtonsEventListeners() {
-    this.manualInsertButton.addEventListener('click', e => {
-      e.preventDefault()
-
-      const value = this.manualInputKey.value
-      this.handleManualAction({ action: 'insert', value })
-    })
-
-    this.manualSearchButton.addEventListener('click', e => {
-      e.preventDefault()
-
-      const value = parseNumberIfPossible(this.manualInputKey.value)
-      this.handleManualAction({ action: 'search', value })
-    })
-
-    this.manualDeleteButton.addEventListener('click', e => {
-      e.preventDefault()
-
-      const value = parseNumberIfPossible(this.manualInputKey.value)
-      this.handleManualAction({ action: 'delete', value })
-    })
-
     this.increaseFanoutButton.addEventListener('click', e => {
       e.preventDefault()
 
@@ -142,27 +99,25 @@ class Controlls extends Observable {
       EventProcessor.getInstance().changeTimeInterval(timeInterval)
     })
 
-    this.randomInsertButton.addEventListener('click', e => {
-      e.preventDefault()
-
-      const start = Number(this.randomInsertionInputStart.value)
-      const end = Number(this.randomInsertionInputEnd.value)
-      const count = Number(this.randomInsertionInputCount.value)
-
-      console.log(start, end, count)
-      this.handleRandomAction({ action: 'insert', start, end, count })
-    })
-
-    this.randomDeleteButton.addEventListener('click', e => {
-      e.preventDefault()
-      const count = Number(this.randomDeletionInputCount.value)
-      this.handleRandomAction({ action: 'delete', count })
-    })
-
     this.clearTreeButton.addEventListener('click', e => {
       e.preventDefault()
       this.createNewTree()
     })
+  }
+
+  handleAction(data) {
+    const { type } = data
+
+    switch (type) {
+      case 'manual':
+        this.handleManualAction(data)
+        break
+      case 'random':
+        this.handleRandomAction(data)
+        break
+      default:
+        break
+    }
   }
 
   handleRandomAction(data) {

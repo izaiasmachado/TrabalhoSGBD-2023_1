@@ -12,10 +12,18 @@ class BottomBar {
 
   init() {
     this.element = document.getElementById('bottom-controlls-bar')
+    this.nosLidosElement = document.getElementById(
+      'bottom-bar-read-nodes-value',
+    )
+    this.timerElement = document.getElementById('bottom-bar-timer-value')
+    this.nosEscritosElement = document.getElementById(
+      'bottom-bar-written-nodes-value',
+    )
     this.hide()
   }
 
   reset() {
+    this.stopTimer()
     this.setTempo(0)
     this.setNosLidos(0)
     this.setNosEscritos(0)
@@ -32,6 +40,7 @@ class BottomBar {
   }
 
   startTimer() {
+    this.reset()
     this.startTime = new Date()
 
     this.timerInterval = setInterval(() => {
@@ -46,21 +55,24 @@ class BottomBar {
   }
 
   setTempo(tempo) {
-    const timer = document.getElementById('bottom-bar-timer-value')
-    timer.innerHTML = `${tempo} ms`
+    this.timerElement.innerHTML = `${tempo} ms`
   }
 
   setNosLidos(nosLidos) {
-    const nosLidosElement = document.getElementById(
-      'bottom-bar-read-nodes-value',
-    )
-    nosLidosElement.innerHTML = nosLidos
+    this.nosLidosElement.innerHTML = nosLidos
   }
 
   setNosEscritos(nosEscritos) {
-    const nosEscritosElement = document.getElementById(
-      'bottom-bar-written-nodes-value',
-    )
-    nosEscritosElement.innerHTML = nosEscritos
+    this.nosEscritosElement.innerHTML = nosEscritos
+  }
+
+  increaseReadNodes() {
+    const nosLidos = parseInt(this.nosLidosElement.innerHTML) + 1
+    this.setNosLidos(nosLidos)
+  }
+
+  increaseWrittenNodes() {
+    const nosEscritos = parseInt(this.nosEscritosElement.innerHTML) + 1
+    this.setNosEscritos(nosEscritos)
   }
 }

@@ -122,6 +122,7 @@ class Controlls extends Observable {
 
   handleRandomAction(data) {
     const { action, count } = data
+    BottomBar.getInstance().startTimer()
 
     switch (action) {
       case 'insert':

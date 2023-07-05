@@ -1,0 +1,18 @@
+#bottom-controlls-bar {
+  /* display: flex; */
+  display: none;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 40px;
+  margin: 0 10px;
+  padding: 10px 10px;
+  font-size: 1.2rem;
+}
+
+.bottomControllsInfo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}

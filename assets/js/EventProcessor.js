@@ -19,10 +19,12 @@ class EventProcessor {
 
   start() {
     this.interval = setInterval(() => {
-      if (!this.eventQueue.isEmpty()) {
-        const event = this.eventQueue.dequeue()
-        event.callback(event)
+      if (this.eventQueue.isEmpty()) {
+        BottomBar.getInstance().stopTimer()
+        return
       }
+      const event = this.eventQueue.dequeue()
+      event.callback(event)
     }, this.timeInterval)
   }
 

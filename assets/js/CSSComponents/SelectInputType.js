@@ -7,8 +7,9 @@ window.addEventListener('load', function () {
   const randomInsertBar = document.querySelector('#random-insert-container')
   const randomDeleteBar = document.querySelector('#random-delete-container')
 
+  const bottomBar = BottomBar.getInstance()
+
   selectInputManual.addEventListener('click', function () {
-    console.log('selectInputManual')
     selectInputManual.classList.add('selected')
     selectInsertRandom.classList.remove('selected')
     selectDeleteRandom.classList.remove('selected')
@@ -16,6 +17,7 @@ window.addEventListener('load', function () {
     manualInputBar.style.display = 'flex'
     randomInsertBar.style.display = 'none'
     randomDeleteBar.style.display = 'none'
+    bottomBar.hide()
   })
 
   selectInsertRandom.addEventListener('click', function () {
@@ -26,6 +28,7 @@ window.addEventListener('load', function () {
     randomInsertBar.style.display = 'flex'
     manualInputBar.style.display = 'none'
     randomDeleteBar.style.display = 'none'
+    bottomBar.show()
   })
 
   selectDeleteRandom.addEventListener('click', function () {
@@ -36,5 +39,6 @@ window.addEventListener('load', function () {
     randomDeleteBar.style.display = 'flex'
     manualInputBar.style.display = 'none'
     randomInsertBar.style.display = 'none'
+    bottomBar.show()
   })
 })

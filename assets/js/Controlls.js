@@ -12,6 +12,7 @@ class Controlls extends Observable {
     if (this.treeVisualizer) this.treeVisualizer.clear()
     this.tree = new BPlusTree(this.fanout)
     this.treeVisualizer = new BPlusTreeVisualizer(this.tree)
+    BottomBar.getInstance().reset()
   }
 
   init() {
@@ -47,6 +48,8 @@ class Controlls extends Observable {
     this.increaseFanoutButton = document.getElementById(
       'increase-fanout-button',
     )
+
+    this.clearTreeButton = document.getElementById('clear-tree-button')
 
     setInterval(() => {
       console.log('tree', this.tree)
@@ -118,10 +121,16 @@ class Controlls extends Observable {
       const count = Number(this.randomDeletionInputCount.value)
       this.handleRandomAction({ action: 'delete', count })
     })
+
+    this.clearTreeButton.addEventListener('click', e => {
+      e.preventDefault()
+      this.createNewTree()
+    })
   }
 
   handleRandomAction(data) {
     const { action, count } = data
+    BottomBar.getInstance().startTimer()
 
     switch (action) {
       case 'insert':

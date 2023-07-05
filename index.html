@@ -22,6 +22,9 @@
     <link rel="stylesheet" href="assets/css/TopBar/InsertValues.css" />
     <link rel="stylesheet" href="assets/css/TopBar/TreeOptions.css" />
     <script src="assets/js/CSSComponents/SelectInputType.js"></script>
+
+    <link rel="stylesheet" href="assets/css/BottomBar/BottomControllsBar.css" />
+    <script src="assets/js/CSSComponents/BottomBar.js"></script>
     <!-- <script src="assets/js/TypeInput.js"></script> -->
   </head>
   <body>
@@ -148,6 +151,7 @@
                 </button>
               </div>
             </div>
+
             <div class="treeOption">
               <div class="treeOptionTitle">Velocidade</div>
               <div class="treeOptionSelector">
@@ -162,8 +166,44 @@
                 />
               </div>
             </div>
+
+            <div class="treeOption" id="tree-option-button">
+              <button
+                class="input-button pure-material-button-contained"
+                id="clear-tree-button"
+              >
+                Limpar Árvore
+              </button>
+            </div>
           </div>
         </nav>
+      </div>
+      <div id="bottom-controlls-bar">
+        <div class="bottomControllsInfo">
+          <div class="bottomControllsInfoTitle">Tempo:</div>
+          <div id="bottom-bar-timer-value" class="bottomControllsInfoValue">
+            0
+          </div>
+        </div>
+        <div class="bottomControllsInfo">
+          <div class="bottomControllsInfoTitle">Leitura em Nós:</div>
+          <div
+            id="bottom-bar-read-nodes-value"
+            class="bottomControllsInfoValue"
+          >
+            0
+          </div>
+        </div>
+
+        <div class="bottomControllsInfo">
+          <div class="bottomControllsInfoTitle">Escrita em Nós:</div>
+          <div
+            id="bottom-bar-written-nodes-value"
+            class="bottomControllsInfoValue"
+          >
+            0
+          </div>
+        </div>
       </div>
       <div id="tree"></div>
     </div>

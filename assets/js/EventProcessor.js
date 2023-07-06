@@ -57,3 +57,7 @@ class EventProcessor {
     }
   }
 }
+
+window.addEventListener('load', () => {
+  EventProcessor.getInstance()
+})

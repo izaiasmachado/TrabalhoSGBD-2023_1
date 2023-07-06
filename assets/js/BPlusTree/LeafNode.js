@@ -23,10 +23,6 @@ class LeafNode extends BPlusTreeNode {
   }
 
   delete(value) {
-    if (value == '7') {
-      console.log('===== DELETE =====')
-      console.log('this', this.keys.slice())
-    }
     const i = this.keys.findIndex(k => isLowerOrEqual(value, k))
 
     // Caso a chave seja igual a uma das chaves do nó

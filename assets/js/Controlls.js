@@ -1,7 +1,7 @@
 class Controlls extends Observable {
   constructor() {
     super()
-    this.fanout = 4
+    this.fanout = 3
     this.treeKeys = new Set()
     this.treeSelector = TreeSelector.getInstance()
     this.init()
@@ -18,6 +18,8 @@ class Controlls extends Observable {
   createNewTree(treeType) {
     if (!treeType) treeType = this.treeSelector.getSelectedTreeType()
     if (this.treeVisualizer) this.treeVisualizer.clear()
+
+    this.treeKeys = new Set()
 
     switch (treeType) {
       case 'b-tree':
@@ -46,7 +48,10 @@ class Controlls extends Observable {
   init() {
     this.createNewTree('b-plus-tree')
 
-    this.treeSelector.setChangeTreeCallback(this.createNewTree.bind(this))
+    this.treeSelector.setChangeTreeCallback(data => {
+      this.createNewTree(data)
+    })
+
     ActionListener.getInstance().setCallback(data => {
       this.handleAction(data)
     })

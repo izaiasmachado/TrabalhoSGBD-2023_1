@@ -1,8 +1,22 @@
 class BTreeNode extends BaseNode {
-  constructor(fanout, isLeaf = false) {
+  constructor(fanout) {
     super(fanout)
     this.id = uuidv4()
-    this.leaf = isLeaf
+  }
+
+  isLeaf() {
+    let leaf = true
+
+    if (!Boolean(this.pointers)) return leaf
+
+    this.pointers.some(pointer => {
+      if (!(pointer instanceof BTreeNode)) {
+        leaf = false
+        return leaf
+      }
+    })
+
+    return leaf
   }
 
   mostLeftKey() {
@@ -57,14 +71,12 @@ class BTreeNode extends BaseNode {
   }
 
   insert(value, pointer = null) {
-    const keyIndex = this.leaf
-      ? this.keys.findIndex(key => isLowerOrEqual(value, key))
-      : this.keys.findIndex(key => isLower(value, key))
+    const keyIndex = this.keys.findIndex(key => isLowerOrEqual(value, key))
     const insertKeyIndex = keyIndex !== -1 ? keyIndex : this.keys.length
+
     this.keys.splice(insertKeyIndex, 0, value)
 
-    const insertsAt = this.leaf ? insertKeyIndex : insertKeyIndex + 1
-    this.pointers.splice(insertsAt, 0, pointer)
+    this.pointers.splice(insertKeyIndex + 1, 0, pointer)
 
     this.notifyAll({
       type: 'insertKey',
@@ -80,13 +92,13 @@ class BTreeNode extends BaseNode {
   }
 
   delete(value) {
-    const i = this.keys.findIndex(k => isLowerOrEqual(value, k))
+    const keyIndex = this.keys.findIndex(key => isLowerOrEqual(value, key))
 
-    if (value !== this.keys[i]) return
+    if (value !== this.keys[keyIndex]) return
 
-    this.keys.splice(i, 1)
+    this.keys.splice(keyIndex, 1)
 
-    this.leaf ? this.pointers.splice(i, 1) : this.pointers.splice(i + 1, 1)
+    this.pointers.splice(keyIndex + 1, 1)
 
     this.notifyAll({
       type: 'deleteKey',
@@ -100,31 +112,21 @@ class BTreeNode extends BaseNode {
   }
 
   split(rightNode) {
-    if (!this.leaf) {
-      const keyMiddleIndex = Math.ceil((this.fanout + 1) / 2) - 1
-      const pointersMiddleIndex = Math.ceil((this.fanout + 1) / 2)
-      const keysToInsertInRightNode = this.keys.slice(keyMiddleIndex)
-      const pointersToInsertInRightNode =
-        this.pointers.slice(pointersMiddleIndex)
-
-      keysToInsertInRightNode.forEach((key, index) => {
-        const pointer = pointersToInsertInRightNode[index]
-        this.delete(key)
-        rightNode.insert(key, pointer)
-      })
-
-      const k2 = rightNode.mostLeftKey()
-      rightNode.delete(k2)
-      return k2
-    }
-
     const keyMiddleIndex = Math.ceil(this.fanout / 2)
     const keysRightNode = this.keys.slice(keyMiddleIndex)
-    const pointersRightNode = this.pointers.slice(keyMiddleIndex)
+    const pointersMiddleIndex = Math.ceil(this.fanout / 2)
+    const pointersToInsertInRightNode = this.pointers.slice(pointersMiddleIndex)
+
+    console.log(keysRightNode)
+    console.log(keysRightNode.length)
+    console.log(pointersToInsertInRightNode)
+    console.log(pointersToInsertInRightNode.length)
+
+    rightNode.pointers.push(pointersToInsertInRightNode[0])
 
     keysRightNode.forEach((key, index) => {
       this.delete(key)
-      rightNode.insert(key, pointersRightNode[index])
+      rightNode.insert(key, pointersToInsertInRightNode[index + 1])
     })
   }
 }

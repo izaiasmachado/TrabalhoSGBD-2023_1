@@ -3,31 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Visualizacao Árvores</title>
+    <title>Visualização Árvores</title>
+    <link rel="icon" href="assets/img/favicon.ico" />
+
     <link rel="stylesheet" href="assets/css/style.css" />
+
     <script src="assets/js/utils.js"></script>
-    <script src="assets/js/BPlusTree.js"></script>
-    <script src="assets/js/BPlusTreeVisualizer.js"></script>
-    <script src="assets/js/BPlusTreeNode.js"></script>
-    <script src="assets/js/BPlusTreeNodeVisualizer.js"></script>
     <script src="assets/js/Controlls.js"></script>
     <script src="assets/js/EventQueue.js"></script>
     <script src="assets/js/EventProcessor.js"></script>
-    <script src="assets/js/scripts.js"></script>
 
-    <!-- <link rel="stylesheet" href="assets/css/SearchNavStyle/TypeInput.css" />
-    <link rel="stylesheet" href="assets/css/SearchNavStyle/SearchBar.css" /> -->
     <link rel="stylesheet" href="assets/css/TopBar/NavBar.css" />
     <link rel="stylesheet" href="assets/css/TopBar/SelectInputType.css" />
     <link rel="stylesheet" href="assets/css/TopBar/InsertValues.css" />
     <link rel="stylesheet" href="assets/css/TopBar/TreeOptions.css" />
-    <script src="assets/js/CSSComponents/SelectInputType.js"></script>
+
+    <!-- Components -->
+    <script src="assets/js/Components/ActionSelector.js"></script>
+    <script src="assets/js/Components/ActionListener.js"></script>
+    <script src="assets/js/Components/BottomBar.js"></script>
+    <script src="assets/js/Components/TreeSelector.js"></script>
+    <script src="assets/js/Components/OptionListener.js"></script>
 
     <link rel="stylesheet" href="assets/css/BottomBar/BottomControllsBar.css" />
-    <script src="assets/js/CSSComponents/BottomBar.js"></script>
-
     <link rel="stylesheet" href="assets/css/TreeSelector/TreeSelector.css" />
-    <script src="assets/js/CSSComponents/TreeSelector.js"></script>
+
+    <!-- Base Tree -->
+    <script src="assets/js/BaseTree/BaseNode.js"></script>
+
+    <!-- B Plus Tree -->
+    <script src="assets/js/BPlusTree/BPlusTree.js"></script>
+    <script src="assets/js/BPlusTree/BPlusTreeVisualizer.js"></script>
+    <script src="assets/js/BPlusTree/BPlusTreeNode.js"></script>
+    <script src="assets/js/BPlusTree/BPlusTreeNodeVisualizer.js"></script>
+
+    <script src="assets/js/BPlusTree/InternalNode.js"></script>
+    <script src="assets/js/BPlusTree/LeafNode.js"></script>
 
     <!-- <script src="assets/js/TypeInput.js"></script> -->
   </head>
@@ -38,6 +49,9 @@
     <canvas id="canvas"></canvas>
     <div id="container">
       <div class="treeSelector">
+        <div id="logo">
+          <img src="assets/img/tree.png" />
+        </div>
         <div id="b-plus-button" class="treeSelectorTitle selected">
           Árvore B+
         </div>

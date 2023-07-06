@@ -4,13 +4,15 @@ class Controlls extends Observable {
     this.fanout = 4
     this.treeKeys = new Set()
     this.treeSelector = TreeSelector.getInstance()
-    this.createNewTree('b-plus-tree')
     this.init()
-    this.addButtonsEventListeners()
   }
 
-  changeTree(treeType) {
-    this.createNewTree(treeType)
+  static getInstance() {
+    if (!Controlls.instance) {
+      Controlls.instance = new Controlls()
+    }
+
+    return Controlls.instance
   }
 
   createNewTree(treeType) {
@@ -37,124 +39,41 @@ class Controlls extends Observable {
   }
 
   createNewBTree() {
-    console.log('createNewBTree')
     this.tree = undefined
     this.treeVisualizer = undefined
   }
 
   init() {
-    this.manualInputKey = document.getElementById('manual-input-key')
-    this.manualInsertButton = document.getElementById('manual-insert-button')
-    this.manualSearchButton = document.getElementById('manual-search-button')
-    this.manualDeleteButton = document.getElementById('manual-delete-button')
+    this.createNewTree('b-plus-tree')
 
-    this.randomInsertionInputStart = document.getElementById(
-      'random-insert-input-start',
-    )
-    this.randomInsertionInputEnd = document.getElementById(
-      'random-insert-input-end',
-    )
-    this.randomInsertionInputCount = document.getElementById(
-      'random-insert-input-count',
-    )
-    this.randomInsertButton = document.getElementById('random-insert-button')
+    this.treeSelector.setChangeTreeCallback(this.createNewTree.bind(this))
+    ActionListener.getInstance().setCallback(data => {
+      this.handleAction(data)
+    })
 
-    this.randomDeletionInputCount = document.getElementById(
-      'random-deletion-input-count',
-    )
-    this.randomDeleteButton = document.getElementById('random-delete-button')
+    OptionListener.getInstance().setChangeFanoutCallback(fanout => {
+      this.fanout = fanout
+      this.createNewTree()
+    })
 
-    this.showFanout = document.getElementById('show-fanout')
-    this.speedSelector = document.getElementById('tree-speed-selector')
-
-    this.showFanout.textContent = this.tree.fanout
-
-    this.descreaseFanoutButton = document.getElementById(
-      'decrease-fanout-button',
-    )
-    this.increaseFanoutButton = document.getElementById(
-      'increase-fanout-button',
-    )
-
-    this.clearTreeButton = document.getElementById('clear-tree-button')
-
-    setInterval(() => {
-      console.log('tree', this.tree)
-    }, 3000)
-
-    this.treeSelector.setChangeTreeCallback(this.changeTree.bind(this))
+    OptionListener.getInstance().setClearTreeCallback(() => {
+      this.createNewTree()
+    })
   }
 
-  addButtonsEventListeners() {
-    this.manualInsertButton.addEventListener('click', e => {
-      e.preventDefault()
+  handleAction(data) {
+    const { type } = data
 
-      const value = this.manualInputKey.value
-      this.handleManualAction({ action: 'insert', value })
-    })
-
-    this.manualSearchButton.addEventListener('click', e => {
-      e.preventDefault()
-
-      const value = parseNumberIfPossible(this.manualInputKey.value)
-      this.handleManualAction({ action: 'search', value })
-    })
-
-    this.manualDeleteButton.addEventListener('click', e => {
-      e.preventDefault()
-
-      const value = parseNumberIfPossible(this.manualInputKey.value)
-      this.handleManualAction({ action: 'delete', value })
-    })
-
-    this.increaseFanoutButton.addEventListener('click', e => {
-      e.preventDefault()
-
-      if (this.tree.fanout === 10) return
-      this.fanout = this.fanout + 1
-      this.showFanout.textContent = this.fanout
-      this.createNewTree()
-    })
-
-    this.descreaseFanoutButton.addEventListener('click', e => {
-      e.preventDefault()
-
-      if (this.tree.fanout === 3) return
-      this.fanout = this.fanout - 1
-      this.showFanout.textContent = this.fanout
-      this.createNewTree()
-    })
-
-    this.speedSelector.addEventListener('change', e => {
-      e.preventDefault()
-
-      console.log(e.target.value)
-      const timeInterval = 1220 - Number(e.target.value)
-      console.log(timeInterval)
-      EventProcessor.getInstance().changeTimeInterval(timeInterval)
-    })
-
-    this.randomInsertButton.addEventListener('click', e => {
-      e.preventDefault()
-
-      const start = Number(this.randomInsertionInputStart.value)
-      const end = Number(this.randomInsertionInputEnd.value)
-      const count = Number(this.randomInsertionInputCount.value)
-
-      console.log(start, end, count)
-      this.handleRandomAction({ action: 'insert', start, end, count })
-    })
-
-    this.randomDeleteButton.addEventListener('click', e => {
-      e.preventDefault()
-      const count = Number(this.randomDeletionInputCount.value)
-      this.handleRandomAction({ action: 'delete', count })
-    })
-
-    this.clearTreeButton.addEventListener('click', e => {
-      e.preventDefault()
-      this.createNewTree()
-    })
+    switch (type) {
+      case 'manual':
+        this.handleManualAction(data)
+        break
+      case 'random':
+        this.handleRandomAction(data)
+        break
+      default:
+        break
+    }
   }
 
   handleRandomAction(data) {
@@ -213,3 +132,7 @@ class Controlls extends Observable {
     }
   }
 }
+
+window.addEventListener('load', () => {
+  Controlls.getInstance()
+})

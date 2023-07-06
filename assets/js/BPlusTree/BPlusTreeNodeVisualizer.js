@@ -107,10 +107,9 @@ class BPlusTreeNodeVisualizer {
    */
   getPointerOutPoint(pointer) {
     const rect = this.element.getBoundingClientRect()
-
     // Divide o tamanho do nó pela quantidade de ponteiros
     // para saber o tamanho de cada ponteiro
-    const pointerWidth = rect.width / this.node.pointers.length
+    const pointerWidth = rect.width / (this.node.pointers.length - 1)
 
     // O X é calculado com base no ponteiro
     // De modo que caso seja o primeiro ponteiro, o da esquerda.

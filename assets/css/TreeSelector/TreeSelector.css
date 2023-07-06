@@ -1,3 +1,26 @@
+.titleBar {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 10px;
+}
+
+.githubLogo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 45px;
+}
+
+.githubLogo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.githubLogo img:hover {
+  cursor: pointer;
+}
+
 #logo {
   display: flex;
   align-items: center;
@@ -12,7 +35,6 @@
 }
 
 .treeSelector {
-  margin: 10px 10px;
   display: flex;
   align-items: center;
   gap: 10px;

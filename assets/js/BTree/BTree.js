@@ -6,8 +6,12 @@ class BTree extends Observable {
     this.createNodeFunction = this.defaultCreateNodeFunction
   }
 
-  defaultCreateNodeFunction(fanout, isLeaf) {
-    const createdNode = new BTreeNode(fanout, isLeaf)
+  getRoot() {
+    return this.root
+  }
+
+  defaultCreateNodeFunction(fanout) {
+    const createdNode = new BTreeNode(fanout)
     this.notifyAll({
       type: 'createdNewNode',
       data: {
@@ -27,7 +31,7 @@ class BTree extends Observable {
     let root = this.root
     let level = 0
 
-    while (!root.leaf) {
+    while (!root.isLeaf()) {
       const rootPointerIndex = root.pointers.findIndex(p => p === node)
 
       if (rootPointerIndex !== -1) return level + 1
@@ -49,7 +53,7 @@ class BTree extends Observable {
   findSupposedLeafNode(value) {
     let node = this.root
 
-    while (!node.leaf) {
+    while (!node.isLeaf()) {
       const keyIndex = node.keys.findIndex(key => isLower(value, key))
 
       this.notifyAll({
@@ -86,10 +90,14 @@ class BTree extends Observable {
         targetNode === null ||
         targetNode === undefined
       ) {
+        console.log('otário o nó é nulo')
         return null
       }
 
-      if (!currentNode.pointers || currentNode.leaf) return null
+      if (!currentNode.pointers || currentNode.isLeaf()) {
+        console.log('otário não existe ponteiros no nó')
+        return null
+      }
 
       const isNodeInPointers = currentNode.pointers.some(pointer => {
         return pointer.id === targetNode.id
@@ -110,9 +118,11 @@ class BTree extends Observable {
     return findParent(this.root, node)
   }
 
-  insertParent(node, newKey, newNode) {
+  insertParent(node, newNode) {
+    const value = node.mostRightKey()
+
     if (this.root == node) {
-      const newRoot = this.createNodeFunction(this.fanout, false)
+      const newRoot = this.createNodeFunction(this.fanout)
 
       this.notifyAll({
         type: 'createRoot',
@@ -121,8 +131,8 @@ class BTree extends Observable {
         },
       })
 
-      node.delete(newKey)
-      newRoot.insert(newKey, node)
+      node.delete(value)
+      newRoot.insert(value, node)
       newRoot.pointers.push(newNode)
       this.root = newRoot
       return
@@ -130,35 +140,36 @@ class BTree extends Observable {
 
     const parent = this.parent(node)
 
-    if (parent.pointers.length < this.fanout) {
-      node.delete(newKey)
-      parent.insert(newKey, newNode)
+    if (parent.keys.length < this.fanout - 1) {
+      node.delete(value)
+      parent.insert(value, newNode)
       return
     }
 
-    node.delete(newKey)
-    parent.insert(newKey, newNode)
+    node.delete(value)
+    parent.insert(value, newNode)
 
-    const rightNode = this.createNodeFunction(this.fanout, false)
+    const rightNode = this.createNodeFunction(this.fanout)
 
-    this.notifyAll({
-      type: 'createNode',
-      data: {
-        leftNode: parent,
-        node: rightNode,
-        level: this.getNodeLevel(node),
-      },
-    })
+    // this.notifyAll({
+    //   type: 'createNode',
+    //   data: {
+    //     leftNode: parent,
+    //     node: rightNode,
+    //     level: this.getNodeLevel(node),
+    //   },
+    // })
 
-    const k2 = parent.split(rightNode)
-    this.insertParent(parent, k2, rightNode)
+    parent.split(rightNode)
+
+    this.insertParent(parent, rightNode)
   }
 
-  insert(value, pointer) {
+  insert(value) {
     let leafNode
 
     if (this.isEmpty()) {
-      this.root = this.createNodeFunction(this.fanout, true)
+      this.root = this.createNodeFunction(this.fanout)
 
       leafNode = this.root
 
@@ -173,13 +184,13 @@ class BTree extends Observable {
     }
 
     if (leafNode.keys.length < leafNode.fanout - 1) {
-      leafNode.insert(value, pointer)
+      leafNode.insert(value)
       return
     }
 
-    leafNode.insert(value, pointer)
+    leafNode.insert(value)
 
-    const rightNode = this.createNodeFunction(this.fanout, true)
+    const rightNode = this.createNodeFunction(this.fanout)
 
     this.notifyAll({
       type: 'createNode',
@@ -192,7 +203,7 @@ class BTree extends Observable {
 
     leafNode.split(rightNode)
 
-    this.insertParent(leafNode, leafNode.mostRightKey(), rightNode)
+    this.insertParent(leafNode, rightNode)
   }
 
   find(value) {}

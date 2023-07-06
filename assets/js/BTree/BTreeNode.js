@@ -5,18 +5,11 @@ class BTreeNode extends BaseNode {
   }
 
   isLeaf() {
-    let leaf = true
+    if (this.pointers.length) {
+      return false
+    }
 
-    if (!Boolean(this.pointers)) return leaf
-
-    this.pointers.some(pointer => {
-      if (!(pointer instanceof BTreeNode)) {
-        leaf = false
-        return leaf
-      }
-    })
-
-    return leaf
+    return true
   }
 
   mostLeftKey() {
@@ -76,7 +69,7 @@ class BTreeNode extends BaseNode {
 
     this.keys.splice(insertKeyIndex, 0, value)
 
-    this.pointers.splice(insertKeyIndex + 1, 0, pointer)
+    if (pointer !== null) this.pointers.splice(insertKeyIndex + 1, 0, pointer)
 
     this.notifyAll({
       type: 'insertKey',
@@ -117,12 +110,8 @@ class BTreeNode extends BaseNode {
     const pointersMiddleIndex = Math.ceil(this.fanout / 2)
     const pointersToInsertInRightNode = this.pointers.slice(pointersMiddleIndex)
 
-    console.log(keysRightNode)
-    console.log(keysRightNode.length)
-    console.log(pointersToInsertInRightNode)
-    console.log(pointersToInsertInRightNode.length)
-
-    rightNode.pointers.push(pointersToInsertInRightNode[0])
+    if (pointersToInsertInRightNode.length)
+      rightNode.pointers.push(pointersToInsertInRightNode[0])
 
     keysRightNode.forEach((key, index) => {
       this.delete(key)

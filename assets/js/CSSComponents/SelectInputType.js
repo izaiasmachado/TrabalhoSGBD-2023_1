@@ -8,7 +8,7 @@ window.addEventListener('load', function () {
   const randomDeleteBar = document.querySelector('#random-delete-container')
 
   selectInputManual.addEventListener('click', function () {
-    console.log('selectInputManual')
+    // console.log('selectInputManual')
     selectInputManual.classList.add('selected')
     selectInsertRandom.classList.remove('selected')
     selectDeleteRandom.classList.remove('selected')

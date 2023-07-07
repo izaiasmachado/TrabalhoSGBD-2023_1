@@ -90,12 +90,10 @@ class BTree extends Observable {
         targetNode === null ||
         targetNode === undefined
       ) {
-        console.log('otário o nó é nulo')
         return null
       }
 
       if (!currentNode.pointers || currentNode.isLeaf()) {
-        console.log('otário não existe ponteiros no nó')
         return null
       }
 
@@ -151,14 +149,14 @@ class BTree extends Observable {
 
     const rightNode = this.createNodeFunction(this.fanout)
 
-    // this.notifyAll({
-    //   type: 'createNode',
-    //   data: {
-    //     leftNode: parent,
-    //     node: rightNode,
-    //     level: this.getNodeLevel(node),
-    //   },
-    // })
+    this.notifyAll({
+      type: 'createNode',
+      data: {
+        leftNode: parent,
+        node: rightNode,
+        level: 0, //ISSO É PROVISÓRIO
+      },
+    })
 
     parent.split(rightNode)
 
@@ -197,7 +195,7 @@ class BTree extends Observable {
       data: {
         leftNode: leafNode,
         node: rightNode,
-        level: this.getNodeLevel(leafNode),
+        level: 0, //ISSO É PROVISÓRIO
       },
     })
 

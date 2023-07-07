@@ -47,7 +47,7 @@ class ActionListener {
     this.manualInsertButton.addEventListener('click', e => {
       e.preventDefault()
 
-      const value = this.manualInputKey.value
+      const value = parseNumberIfPossible(this.manualInputKey.value)
       this.callback({
         type: 'manual',
         action: 'insert',

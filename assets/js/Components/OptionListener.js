@@ -1,6 +1,7 @@
 class OptionListener {
   constructor() {
     this.init()
+    this.fanout = 4
     this.addEventListeners()
   }
 
@@ -66,6 +67,7 @@ class OptionListener {
 
   setChangeFanoutCallback(callback) {
     this.changeFanoutCallback = callback
+    this.changeFanoutCallback(this.fanout)
   }
 
   setClearTreeCallback(callback) {

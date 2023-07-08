@@ -1,6 +1,5 @@
-class Controlls extends Observable {
+class Controlls {
   constructor() {
-    super()
     this.fanout = 4
     this.treeKeys = new Set()
     this.treeSelector = TreeSelector.getInstance()

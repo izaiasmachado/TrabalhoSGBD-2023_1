@@ -122,8 +122,5 @@ class BTreeVisualizer {
     this.levels = []
     this.nodeVisualizers = {}
     this.render()
-
-    const container = document.querySelector('#container')
-    container.removeChild(this.element)
   }
 }

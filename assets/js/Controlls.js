@@ -93,7 +93,8 @@ class Controlls extends Observable {
         const { start, end } = data
         const randomNumbers = generateRandomUniqueNumbers(start, end, count)
 
-        if (!randomNumbers) return
+        if (!randomNumbers)
+          return alert('[ERRO] Certifique-se que o intervalo é válido!')
 
         randomNumbers.forEach(value => {
           this.treeKeys.add(value)

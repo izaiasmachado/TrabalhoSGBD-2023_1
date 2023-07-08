@@ -93,7 +93,8 @@ class Controlls extends Observable {
         const { start, end } = data
         const randomNumbers = generateRandomUniqueNumbers(start, end, count)
 
-        if (!randomNumbers) return
+        if (!randomNumbers)
+          return alert('[ERRO] Certifique-se que o intervalo é válido!')
 
         randomNumbers.forEach(value => {
           this.treeKeys.add(value)
@@ -127,7 +128,9 @@ class Controlls extends Observable {
         this.tree.insert(value)
         break
       case 'search':
-        this.tree.find(value)
+        const found = this.tree.find(value)
+        const message = `Chave ${value}${found ? '' : ' não'} encontrada!`
+        alert(message)
         break
       case 'delete':
         this.treeKeys.delete(value)

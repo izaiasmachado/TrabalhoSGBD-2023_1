@@ -204,7 +204,11 @@ class BTree extends Observable {
     this.insertParent(leafNode, rightNode)
   }
 
-  find(value) {}
+  find(value) {
+    const leafNode = this.findSupposedLeafNode(value)
+    if (leafNode.hasKey(value)) return leafNode
+    return null
+  }
 
   delete(value, pointer) {}
 }

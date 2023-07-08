@@ -1,7 +1,7 @@
 class Controlls extends Observable {
   constructor() {
     super()
-    this.fanout = 3
+    this.fanout = 4
     this.treeKeys = new Set()
     this.treeSelector = TreeSelector.getInstance()
     this.init()
@@ -41,8 +41,8 @@ class Controlls extends Observable {
   }
 
   createNewBTree() {
-    this.tree = undefined
-    this.treeVisualizer = undefined
+    this.tree = new BTree(this.fanout)
+    this.treeVisualizer = new BTreeVisualizer(this.tree)
   }
 
   init() {
@@ -79,6 +79,9 @@ class Controlls extends Observable {
       default:
         break
     }
+
+    console.log(data)
+    console.log(this.tree.root)
   }
 
   handleRandomAction(data) {
@@ -93,9 +96,8 @@ class Controlls extends Observable {
         if (!randomNumbers) return
 
         randomNumbers.forEach(value => {
-          const pointerUUID = uuidv4()
           this.treeKeys.add(value)
-          this.tree.insert(value, pointerUUID)
+          this.tree.insert(value)
         })
         break
       case 'delete':
@@ -108,7 +110,7 @@ class Controlls extends Observable {
           const randomIndex = Math.floor(Math.random() * this.treeKeys.size)
           const randomKey = Array.from(this.treeKeys)[randomIndex]
           this.treeKeys.delete(randomKey)
-          this.tree.delete(randomKey, null)
+          this.tree.delete(randomKey)
         }
         break
       default:
@@ -118,19 +120,18 @@ class Controlls extends Observable {
 
   handleManualAction(data) {
     const { action, value } = data
-    const pointerUUID = uuidv4()
 
     switch (action) {
       case 'insert':
         this.treeKeys.add(value)
-        this.tree.insert(value, pointerUUID)
+        this.tree.insert(value)
         break
       case 'search':
         this.tree.find(value)
         break
       case 'delete':
         this.treeKeys.delete(value)
-        this.tree.delete(value, null)
+        this.tree.delete(value)
         break
       default:
         break

@@ -127,7 +127,9 @@ class Controlls extends Observable {
         this.tree.insert(value)
         break
       case 'search':
-        this.tree.find(value)
+        const found = this.tree.find(value)
+        const message = `Chave ${value}${found ? '' : ' não'} encontrada!`
+        alert(message)
         break
       case 'delete':
         this.treeKeys.delete(value)

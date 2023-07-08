@@ -79,6 +79,9 @@ class Controlls extends Observable {
       default:
         break
     }
+
+    console.log(data)
+    console.log(this.tree.root)
   }
 
   handleRandomAction(data) {
